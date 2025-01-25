@@ -1,6 +1,12 @@
 from django.shortcuts import render
-from django.http import JsonResponse
-# Create your views here.
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from .users import users
 
-def PrintName(request):
-    return JsonResponse("hello kate", safe=False)
+@api_view(['GET'])
+def printName(request):
+    return Response("hello kate")
+
+@api_view(['GET'])
+def getUsers(request):
+    return Response(users)
