@@ -6,3 +6,8 @@ class RequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Request
         fields='__all__'
+
+class DocumentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Request
+        fields='__all__'
