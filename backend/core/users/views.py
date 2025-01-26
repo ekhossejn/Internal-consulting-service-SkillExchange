@@ -16,6 +16,12 @@ def getRequests(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+def getRequest(request, _id):
+    curRequest = Request.objects.get(id=_id)
+    serializer = RequestsSerializer(curRequest, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
 def getDocuments(request):
     documents = Document.objects.all()
     serializer = DocumentsSerializer(documents, many=True)
