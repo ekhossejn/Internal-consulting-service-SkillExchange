@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_rename_authorid_request_author'),
+        ('users', '0002_rename_authorid_request_author'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

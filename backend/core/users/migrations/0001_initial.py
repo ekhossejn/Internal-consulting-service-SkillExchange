@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 ('createdAt', models.TimeField(auto_now_add=True)),
                 ('isActive', models.BooleanField(default=True)),
                 ('authorId', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('requiredSkills', models.ManyToManyField(blank=True, related_name='requests', to='accounts.skill')),
+                ('requiredSkills', models.ManyToManyField(blank=True, related_name='requests', to='users.skill')),
             ],
         ),
     ]
