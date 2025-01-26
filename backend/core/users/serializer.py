@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Request
+from .models import Request, Document
 
 class RequestsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,5 +9,5 @@ class RequestsSerializer(serializers.ModelSerializer):
 
 class DocumentsSerializer(serializers.ModelSerializer):
     class Meta:
-        model=Request
+        model=Document
         fields='__all__'
