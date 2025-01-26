@@ -1,18 +1,31 @@
-import React from 'react'
-import { Container } from 'react-bootstrap'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
+import React from "react";
+import { Container } from "react-bootstrap";
+import Footer from "./components/Footer";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import Profile from "./components/screens/Profile";
+import Signup from "./components/screens/Signup";
+import Login from "./components/screens/Login";
+import Header from "./components/Header";
+import SearchRequests from "./components/screens/SearchRequests";
+import SearchUsers from "./components/screens/SearchUsers";
+import Company from "./components/screens/Company";
 
+  
 export default function App() {
   return (
-  <>
-  <div>
-    <Navbar />
-    <Container >
-      <h1>Skill Exchange</h1>
-    </Container>
-    <Footer/>
-  </div>
-  </>
-  )
+    <>
+      <Router>
+        <Header />
+        <Routes>
+          <Route exact path="/" element={<Profile />}></Route>
+          <Route exact path="/profile" element={<Profile />}></Route>
+          <Route exact path="/login" element={<Login />}></Route>
+          <Route exact path="/signup" element={<Signup />}></Route>
+          <Route exact path="/search/requests" element={<SearchRequests />}></Route>
+          <Route exact path="/search/users" element={<SearchUsers />}></Route>
+          <Route exact path="/profile/company" element={<Company />}></Route>
+        </Routes>
+      </Router>
+    </>
+  );
 }
