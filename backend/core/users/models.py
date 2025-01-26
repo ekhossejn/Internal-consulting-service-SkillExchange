@@ -3,11 +3,12 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Document(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(null=True, blank=True)
     pass
 
 class Company(models.Model):
     pass
-
 
 class Request(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
