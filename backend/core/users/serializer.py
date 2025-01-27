@@ -37,7 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.is_staff
 
 
-class UserSerializerWithToken(serializers.ModelSerializer):
+class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
