@@ -1,0 +1,9 @@
+{% autoescape off %}
+
+Hi {{user.name}}
+Please verify your email:
+
+http://{{domain}}{% url 'verify' uidb64=uid token=token %}
+
+Your Kate&Dasha support
+{% endautoescape %}
