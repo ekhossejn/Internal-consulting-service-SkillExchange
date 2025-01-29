@@ -12,7 +12,7 @@ class Company(models.Model):
 
 class Request(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=20, null=True, blank=False)
+    name = models.CharField(max_length=20, null=False, blank=False)
     requiredSkills = models.ManyToManyField('Skill', related_name='requests', blank=True)
     text = models.CharField(max_length=500, null=False, blank=False)
     createdAt = models.TimeField(auto_now_add=True)
