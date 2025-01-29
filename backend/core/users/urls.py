@@ -7,7 +7,6 @@ urlpatterns = [
     path('documents/', views.getDocuments, name="getDocuments"),
     path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('', views.getProfile, name="getProfile"),
-    path('users/', views.getUsers, name="getUsers"),
     path('register/', views.register, name="register"),
     path('verify/<uidb64>/<token>/', views.verifyAccountView.as_view(), name='verify')
 ]

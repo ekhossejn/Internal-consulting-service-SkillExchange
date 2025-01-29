@@ -18,7 +18,6 @@ class Request(models.Model):
     createdAt = models.TimeField(auto_now_add=True)
     isActive = models.BooleanField(default=True)
     respondedUsers = models.ManyToManyField(User, related_name='requests', blank=True)
-    #_id = models.AutoField(primary_key=True, editable=False)
 
     def __str__(self):
         return self.name

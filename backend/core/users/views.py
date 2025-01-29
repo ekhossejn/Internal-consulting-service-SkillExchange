@@ -21,22 +21,21 @@ from django.conf import settings
 from django.views.generic import View
 
 @api_view(['GET'])
-def printName(request):
-    return Response("hello kate")
-
-@api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getRequests(request):
     requests = Request.objects.all()
     serializer = RequestsSerializer(requests, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getRequest(request, _id):
     curRequest = Request.objects.get(id=_id)
     serializer = RequestsSerializer(curRequest, many=False)
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getDocuments(request):
     documents = Document.objects.all()
     serializer = DocumentsSerializer(documents, many=True)
@@ -60,13 +59,6 @@ def getProfile(request):
     serializer = UserSerializer(user, many=False)
     return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getUsers(request):
-    user = User.objects.all()
-    serializer = UserSerializer(user, many=True)
-    return Response(serializer.data)
-
 @api_view(['POST'])
 def register(request):
     data = request.data 
@@ -86,7 +78,7 @@ def register(request):
         )
         email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [data['email']])
         email_message.send()
-        
+
         serialize = UserSerializerWithToken(user, many=False)
         return Response(serialize.data)
     except Exception as e:
