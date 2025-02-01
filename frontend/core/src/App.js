@@ -10,6 +10,7 @@ import SearchRequests from "./components/screens/SearchRequests";
 import SearchUsers from "./components/screens/SearchUsers";
 import Company from "./components/screens/Company";
 import MyRequests from "./components/screens/MyRequests";
+import RequestScreen from "./components/screens/RequestScreen";
 
   
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
           <Route exact path="/search/users" element={<SearchUsers />}></Route>
           <Route exact path="/profile/company" element={<Company />}></Route>
           <Route exact path="/profile/requests" element={<MyRequests />}></Route>
+          <Route exact path="/profile/requests/:id" element={<RequestScreen />}></Route>
         </Routes>
       </Router>
     </>
