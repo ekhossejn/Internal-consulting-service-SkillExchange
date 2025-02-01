@@ -22,6 +22,17 @@ def getRequest(request, _id):
     serializer = RequestsSerializer(curRequest, many=False)
     return Response(serializer.data)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def createRequest(request):
+    data = request.data
+    serializer = RequestsSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save(author = request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def getDocuments(request):

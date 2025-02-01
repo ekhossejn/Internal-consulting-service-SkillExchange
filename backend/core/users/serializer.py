@@ -5,6 +5,7 @@ class RequestsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Request
         fields='__all__'
+        read_only_fields = ['author']
 
 class DocumentsSerializer(serializers.ModelSerializer):
     class Meta:
