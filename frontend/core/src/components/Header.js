@@ -1,9 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { logout } from "../actions/userActions";
 
 function Header() {
-  return (
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const dispatch = useDispatch();
+
+  const logoutHandler = () => {
+    dispatch(logout());
+  };
+
+  return userInfo ? (
     <Navbar className="navbar navbar-expand-lg bg-light" data-bs-theme="light">
       <div className="container-fluid">
         <Nav.Link as={Link} to="/profile/requests" className="navbar-brand">
@@ -32,7 +41,7 @@ function Header() {
               </Nav.Link>
             </li>
             <li className="nav-item">
-              <Nav.Link href="/logout" className="nav-link">
+              <Nav.Link className="nav-link" onClick={logoutHandler}>
                 Выйти
               </Nav.Link>
             </li>
@@ -40,7 +49,7 @@ function Header() {
         </div>
       </div>
     </Navbar>
-  );
+  ) : null;
 }
 
 export default Header;
