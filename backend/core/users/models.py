@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
-# Create your models here.
+from authorization.models import CustomUser
 
 class Document(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -8,7 +7,9 @@ class Document(models.Model):
     pass
 
 class Company(models.Model):
-    pass
+    domain = models.CharField(null=False, blank=False)
+    name = models.CharField(max_length=20, null=False, blank=False)
+    description = models.CharField(max_length=200, null=False, blank=True)
 
 class Request(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -23,7 +24,10 @@ class Request(models.Model):
         return self.name
 
 class Skill(models.Model):
-    pass
+    name = models.CharField(max_length=100, null=False, blank=False)
 
 class Review(models.Model):
-    pass
+    reviewer = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    reviewee = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text =  models.CharField(max_length=500, null=False, blank=False)
+    rating = models.IntegerField(null=False, default=0)
