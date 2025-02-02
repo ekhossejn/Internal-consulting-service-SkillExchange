@@ -1,10 +1,6 @@
 from django.db import models
-<<<<<<< HEAD
-from authorization.models import CustomUser
-=======
 from authentication.models import CustomUser
 # Create your models here.
->>>>>>> main
 
 class Document(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
