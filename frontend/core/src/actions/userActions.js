@@ -9,7 +9,7 @@ import {
   USER_LOGOUT,
 } from "../constants/userConstants";
 export const signup =
-  (first_name, last_name, email, password) => async (dispatch) => {
+  (email, password) => async (dispatch) => {
     try {
       dispatch({ type: USER_SIGNUP_REQUEST });
 
@@ -20,10 +20,8 @@ export const signup =
       };
 
       const { data } = await axios.post(
-        "/profile/register/",
+        "/register/",
         {
-          fname: first_name,
-          lname: last_name,
           email: email,
           password: password,
         },
@@ -57,9 +55,9 @@ export const login = (email, password) => async (dispatch) => {
     };
 
     const { data } = await axios.post(
-      "/profile/login/",
+      "/api/token/",
       {
-        username: email,
+        email: email,
         password: password,
       },
       config

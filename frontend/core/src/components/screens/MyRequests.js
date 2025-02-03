@@ -20,6 +20,9 @@ function MyRequests() {
     <Container>
       <br />
       <h1>Мои запросы</h1>
+      <div className="d-grid gap-2">
+      <button class="btn btn-lg btn-primary" onClick={() => navigate("/profile/requests/create")}>Создать запрос</button>
+      </div>
     </Container>
   );
 }
