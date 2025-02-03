@@ -17,8 +17,6 @@ import { signup } from "../../actions/userActions";
 
 function Signup() {
   const navigate = useNavigate();
-  const [first_name, setFirstName] = useState("");
-  const [last_name, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [pass1, setPass1] = useState("");
   const [pass2, setPass2] = useState("");
@@ -34,8 +32,6 @@ function Signup() {
   useEffect(()=>{
     if (userInfo) {
       setMessage(userInfo.details)
-      setFirstName("")
-      setLastName("")
       setEmail("")
       setPass1("")
       setPass2("")
@@ -52,7 +48,7 @@ function Signup() {
       setMessage("Пароль слишком короткий. Повторите попытку.");
       navigate("/signup");
     } else {
-      dispatch(signup(first_name, last_name, email, pass1))
+      dispatch(signup(email, pass1))
       setMessage("Регистрация успешна")
       navigate("/login")
     }
@@ -89,26 +85,6 @@ function Signup() {
                 {message && <Message variant="danger">{message}</Message>}
                 {loading && <Loader/>}
                 <Form onSubmit={submitHandler}>
-                  <Form.Group className="mb-3" controlId="first_name">
-                    <Form.Label>Имя</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Иван"
-                      value={first_name}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3" controlId="last_name">
-                    <Form.Label>Фамилия</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Сидоров"
-                      value={last_name}
-                      onChange={(e) => setLastName(e.target.value)}
-                      required
-                    />
-                  </Form.Group>
                   <Form.Group className="mb-3" controlId="email">
                     <Form.Label>Почта</Form.Label>
                     <Form.Control
