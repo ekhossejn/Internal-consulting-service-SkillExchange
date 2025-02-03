@@ -12,7 +12,7 @@ function Header() {
     dispatch(logout());
   };
 
-  return userInfo ? (
+  return (
     <Navbar className="navbar navbar-expand-lg bg-light" data-bs-theme="light">
       <div className="container-fluid">
         <Nav.Link as={Link} to="/profile/requests" className="navbar-brand">
@@ -49,7 +49,7 @@ function Header() {
         </div>
       </div>
     </Navbar>
-  ) : null;
+  );
 }
 
 export default Header;

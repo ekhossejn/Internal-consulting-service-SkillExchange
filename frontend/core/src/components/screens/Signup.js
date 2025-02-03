@@ -40,18 +40,21 @@ function Signup() {
 
   const submitHandler = (e) => {
     e.preventDefault();
+    setMessage("");
 
     if (pass1 != pass2) {
       setMessage("Неверный повторный пароль. Повторите попытку.");
       navigate("/signup");
-    } else if (pass1.length < 5) {
-      setMessage("Пароль слишком короткий. Повторите попытку.");
-      navigate("/signup");
-    } else {
-      dispatch(signup(email, pass1))
-      setMessage("Регистрация успешна")
-      navigate("/login")
+      return;
     }
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(pass1)) {
+      setMessage("Пароль не соответствует условиям.");
+      return;
+    }
+
+    dispatch(signup(email, pass1));
+    navigate("/login");
   };
 
   const showPassword = () => {
@@ -74,6 +77,9 @@ function Signup() {
         <Row>
           <Col md={4}></Col>
           <Col md={4}>
+          {loading ? (
+            <Loader />
+          ) : (
             <Card>
               <Card.Header
                 as="h3"
@@ -83,7 +89,6 @@ function Signup() {
               </Card.Header>
               <Card.Body>
                 {message && <Message variant="danger">{message}</Message>}
-                {loading && <Loader/>}
                 <Form onSubmit={submitHandler}>
                   <Form.Group className="mb-3" controlId="email">
                     <Form.Label>Почта</Form.Label>
@@ -115,7 +120,7 @@ function Signup() {
                       />
                     </InputGroup>
                   </Form.Group>
-                  <small>Пароль должен иметь размер не меньше 5.</small>
+                  <small>Пароль должен содержать минимум 8 символов, хотя бы одну букву и одну цифру.</small>
                   <br />
                   <br />
                   <Form.Group className="mb-3">
@@ -154,6 +159,7 @@ function Signup() {
                 </Row>
               </Card.Body>
             </Card>
+          )}
           </Col>
           <Col md={4}></Col>
         </Row>
