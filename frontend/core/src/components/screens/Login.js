@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useRef } from "react";
 import {
   Container,
   Row,
@@ -19,21 +21,44 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [pass1, setPass1] = useState("");
+  const [message, setMessage] = useState("");
   const [show, changeshow] = useState("fa fa-eye");
   const dispatch = useDispatch();
-  const userLogin = useSelector((state) => state.userLogin);
-  const { error, loading, userInfo } = userLogin;
-  const location = useLocation();
+  const [error, setError] = useState();
+  const [loading, setLoading] = useState();
+  const [userInfo, setUserInfo] = useState();
+  const isFirstRender = useRef(true);
+  const location = useLocation(false);
   const redirect = location.search ? location.search.split("=")[1] : "/profile";
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/profile");
-    }
-  });
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
-    dispatch(login(email, pass1));
+    setLoading(true);
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+  
+      const { data } = await axios.post(
+        "/api/token/",
+        {
+          email: email,
+          password: pass1,
+        },
+        config
+      );
+      localStorage.setItem("userInfo", JSON.stringify(data));
+    setLoading(false);
+    setUserInfo(data);
+  } catch (error) {
+    setLoading(false);
+    setError(error.response && error.response.data.detail
+      ? error.response.data.detail
+      : error.message,);
+  }
+
   };
 
   const showPassword = () => {
@@ -46,6 +71,15 @@ function Login() {
       changeshow("fa fa-eye-slash");
     }
   };
+
+  useEffect(() => {
+    if (error) {
+      setMessage(error);
+    }
+    if (userInfo) {
+      navigate("/profile");
+    }
+  }, [error, userInfo]);
 
   return (
     <>
