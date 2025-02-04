@@ -93,10 +93,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+from decouple import config
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': 'monorail.proxy.rlwy.net',
+        'PORT': '24034'
     }
 }
 
@@ -170,11 +176,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-from decouple import config
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'ekhossejn@gmail.com'
-EMAIL_HOST_PASSWORD = config('DB_PASSWORD')
+EMAIL_HOST_PASSWORD = config('EMAIL_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
