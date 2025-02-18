@@ -20,6 +20,12 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
+    company = models.ForeignKey('users.Company', on_delete=models.CASCADE)
+    image = models.ImageField(null=True, blank=True)
+    name = models.CharField(max_length=20)
+    rating = models.IntegerField(default=0)
+    skills = models.ManyToManyField('users.Skill', related_name='users')
+
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False) 
 
