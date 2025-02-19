@@ -2,9 +2,11 @@ from users import views
 from django.urls import path
 
 urlpatterns = [
-    path('requests/', views.getRequests, name="getRequests"),
-    path('request/<str:_id>', views.getRequest, name="getRequest"),
-    path('create/request/', views.createRequest, name="createRequest"),
-    path('documents/', views.getDocuments, name="getDocuments"),
-    path('', views.getProfile, name="getProfile"),
+    path('request/create/', views.requestCreate),
+    path('request/get/<str:_id>/', views.requestGet),
+    path('requests/get/', views.requestsGet),
+
+    path('documents/get/', views.documentsGet),
+
+    path('', views.profileGet),
 ]

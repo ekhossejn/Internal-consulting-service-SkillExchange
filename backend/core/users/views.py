@@ -8,23 +8,9 @@ from rest_framework import status
 
 from authentication.serializer import CustomUserSerializer
 
-@api_view(['GET'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def getRequests(request):
-    requests = Request.objects.all()
-    serializer = RequestsSerializer(requests, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def getRequest(request, _id):
-    curRequest = Request.objects.get(id=_id)
-    serializer = RequestsSerializer(curRequest, many=False)
-    return Response(serializer.data)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def createRequest(request):
+def requestCreate(request):
     data = request.data
     serializer = RequestsSerializer(data=data)
     if serializer.is_valid():
@@ -35,14 +21,34 @@ def createRequest(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getDocuments(request):
-    documents = Document.objects.all()
+def requestGet(request, _id):
+    try:
+        gotten_request = Request.objects.get(id = _id)
+    except Request.DoesNotExist:
+        return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if request.user.id != gotten_request.author.id:
+        return Response({"detail": "У вас нет доступа для просмотра этого запроса"}, status=status.HTTP_403_FORBIDDEN)
+    serializer = RequestsSerializer(gotten_request, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def requestsGet(request):
+    requests = Request.objects.filter(author = request.user)
+    serializer = RequestsSerializer(requests, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def documentsGet(request):
+    user = request.user
+    documents = Document.objects.get(owner=user)
     serializer = DocumentsSerializer(documents, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def getProfile(request):
+def profileGet(request):
     user = request.user
     serializer = CustomUserSerializer(user, many=False)
     return Response(serializer.data)
