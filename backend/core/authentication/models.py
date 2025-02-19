@@ -20,9 +20,9 @@ class CustomUserManager(BaseUserManager):
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    company = models.ForeignKey('users.Company', on_delete=models.CASCADE)
+    company = models.ForeignKey('users.Company', on_delete=models.CASCADE, null=True)
     image = models.ImageField(null=True, blank=True)
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, null=True)
     rating = models.IntegerField(default=0)
     skills = models.ManyToManyField('users.Skill', related_name='users')
 
