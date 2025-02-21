@@ -8,5 +8,7 @@ urlpatterns = [
 
     path('documents/get/', views.documentsGet),
 
+    path('reviews/get/', views.reviewsGet),
+
     path('', views.profileGet),
 ]

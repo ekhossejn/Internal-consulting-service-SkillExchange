@@ -8,5 +8,5 @@ urlpatterns = [
     path('requests/get/', views.requestsGet),
     path('request/get/<str:_id>/', views.requestGet),
 
-    path('user/<str:_id>/review/create/', views.reviewCreate),
+    path('user/<str:_id>/review/create/', views.reviewCreate)
 ]
