@@ -4,7 +4,7 @@ from .models import CustomUser
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
-        fields=['id', 'email', 'company', 'image', 'name', 'rating', 'skills', 'is_active', 'is_staff']
+        fields=['id', 'email', 'company', 'image', 'name', 'rating_sum', 'rating_count', 'skills', 'is_active', 'is_staff']
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
