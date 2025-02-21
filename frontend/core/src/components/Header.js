@@ -1,15 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav } from "react-bootstrap";
-import { useDispatch } from "react-redux";
-import { logout } from "../actions/userActions";
 
 function Header() {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
-    dispatch(logout());
+    localStorage.removeItem('userInfo');
+    navigate("/login")
   };
 
   return (

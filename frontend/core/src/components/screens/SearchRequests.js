@@ -4,29 +4,43 @@ import axios from "axios";
 import { Row, Col } from "react-bootstrap";
 import Request from "../Request";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { listRequests } from "../../actions/requestActions";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader";
 import Message from "../Message";
 
 function SearchRequests() {
-  const dispatch = useDispatch();
-  const requestsList = useSelector((state) => state.requestsList);
-  const { error, loading, requests } = requestsList;
+  const [error, setError] = useState();
+  const [loading, setLoading] = useState();
+  const [requests, setRequests] = useState([]);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
 
   useEffect(() => {
-    dispatch(listRequests(accessToken));
-  }, [dispatch]);
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get(`/search/requests/get/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setRequests(data);
+      } catch (error) {
+        setError(error.response?.data?.detail || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchRequests();
+  }, []);
 
   useEffect(() => {
     if (error) {
       navigate("/login");
     }
-  }, [error, navigate]);
+  }, [error]);
 
   return (
     <Container>
@@ -36,7 +50,6 @@ function SearchRequests() {
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
-        
       ) : (
         <Row>
           {requests.map((request) => (

@@ -10,7 +10,9 @@ function Profile() {
   const accessToken = userInfo?.access;
   const [documents, setDocuments] = useState([]);
 
-
+    useEffect(() => {
+      return;
+    }, []);
 
   return (
     <Container>
