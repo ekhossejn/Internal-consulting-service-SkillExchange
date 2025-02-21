@@ -35,6 +35,6 @@ class Review(models.Model):
     reviewer = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='reviews_as_reviewer')
     reviewee = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='reviews_as_reviewee')
     text =  models.CharField(max_length=500)
-    rating = models.IntegerField(default=0)
+    rating = models.IntegerField()
     def __str__(self):
-        return self.rating
+        return self.text
