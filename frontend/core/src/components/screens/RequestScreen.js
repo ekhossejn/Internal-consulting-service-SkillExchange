@@ -8,11 +8,6 @@ function RequestScreen() {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   useEffect(() => {
-    if (!userInfo) {
-      navigate("/login");
-      return;
-    }
-
     return;
   }, []);
 

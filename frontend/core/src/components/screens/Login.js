@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useRef } from "react";
 import {
   Container,
   Row,
@@ -11,10 +10,8 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import Loader from "../Loader";
 import Message from "../Message";
-import { login } from "../../actions/userActions";
 
 function Login() {
   const navigate = useNavigate();
@@ -23,24 +20,32 @@ function Login() {
   const [pass1, setPass1] = useState("");
   const [message, setMessage] = useState("");
   const [show, changeshow] = useState("fa fa-eye");
-  const dispatch = useDispatch();
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [userInfo, setUserInfo] = useState();
-  const isFirstRender = useRef(true);
   const location = useLocation(false);
   const redirect = location.search ? location.search.split("=")[1] : "/profile";
+
+  useEffect(() => {
+    if (error) {
+      setMessage(error);
+    }
+    if (userInfo) {
+      navigate("/profile");
+    }
+  }, [error, userInfo]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const config = {
         headers: {
           "Content-type": "application/json",
         },
       };
-  
+
       const { data } = await axios.post(
         "/api/token/",
         {
@@ -49,16 +54,18 @@ function Login() {
         },
         config
       );
-      localStorage.setItem("userInfo", JSON.stringify(data));
-    setLoading(false);
-    setUserInfo(data);
-  } catch (error) {
-    setLoading(false);
-    setError(error.response && error.response.data.detail
-      ? error.response.data.detail
-      : error.message,);
-  }
 
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      setUserInfo(data);
+    } catch (error) {
+      setError(
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const showPassword = () => {
@@ -71,15 +78,6 @@ function Login() {
       changeshow("fa fa-eye-slash");
     }
   };
-
-  useEffect(() => {
-    if (error) {
-      setMessage(error);
-    }
-    if (userInfo) {
-      navigate("/profile");
-    }
-  }, [error, userInfo]);
 
   return (
     <>
