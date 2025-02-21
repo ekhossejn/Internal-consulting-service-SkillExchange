@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from users.models import Request
+from users.models import Request, Review
 from authentication.models import CustomUser
 from users.serializer import RequestsSerializer
 from users.serializer import ReviewsSerializer

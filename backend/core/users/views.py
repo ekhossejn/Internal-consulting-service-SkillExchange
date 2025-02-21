@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
-from .models import Request, Document
-from .serializer import RequestsSerializer, DocumentsSerializer
+from .models import Request, Document, Review
+from .serializer import RequestsSerializer, DocumentsSerializer, ReviewsSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
@@ -40,15 +40,21 @@ def requestsGet(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def documentsGet(request):
+def profileGet(request):
     user = request.user
-    documents = Document.objects.get(owner=user)
+    serializer = CustomUserSerializer(user, many=False)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def documentsGet(request):
+    documents = Document.objects.filter(owner=request.user)
     serializer = DocumentsSerializer(documents, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def profileGet(request):
-    user = request.user
-    serializer = CustomUserSerializer(user, many=False)
+def reviewsGet(request):
+    reviews = Review.objects.filter(reviewee=request.user)
+    serializer = ReviewsSerializer(reviews, many=True)
     return Response(serializer.data)
