@@ -14,12 +14,12 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ['is_active', 'is_staff']
     fieldsets = (
         ('Account data', {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('company', 'image', 'name', 'rating_sum', 'rating_count')}),
+        ('Personal info', {'fields': ('company', 'image', 'name', 'rating_sum', 'rating_count', 'skills')}),
         ('Permissions', {'fields': ('is_active', 'is_staff',)}),
     )
 
     def get_skills(self, obj):
-        return "\n".join([p.skills for p in obj.skills.all()])
+        return "\n".join([p.name for p in obj.skills.all()])
 
     add_fieldsets = (
         (None, {
