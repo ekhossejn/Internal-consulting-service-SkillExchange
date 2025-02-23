@@ -102,7 +102,8 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': 'monorail.proxy.rlwy.net',
-        'PORT': '24034'
+        'PORT': '24034',
+        'CONN_MAX_AGE': 60,
     }
 }
 

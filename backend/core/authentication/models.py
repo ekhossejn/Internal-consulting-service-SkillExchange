@@ -21,7 +21,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     company = models.ForeignKey('users.Company', on_delete=models.CASCADE, null=True)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(default='default.jpg')
     name = models.CharField(max_length=20, null=True)
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
@@ -44,3 +44,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
             'refresh': str(refresh),
             'access': str(refresh.access_token)
         }
+
+    def __getattribute__(self, name):
+        attr = models.Model.__getattribute__(self, name)
+        if name == 'name' and not attr:
+            return f'user/{super(CustomUser, self).__getattribute__("id")}'
+        return attr
