@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Request, Document, Review
+from .models import Request, Document, Review, Skill
+
+class SkillsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Skill
+        fields=['name']
 
 class RequestsSerializer(serializers.ModelSerializer):
+    requiredSkills = SkillsSerializer(many=True)
     class Meta:
         model=Request
         fields='__all__'

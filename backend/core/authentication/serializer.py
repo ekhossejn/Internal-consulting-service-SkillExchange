@@ -1,14 +1,10 @@
 from rest_framework import serializers
 from .models import CustomUser
-from users.models import Skill
+from users.serializer import SkillsSerializer
 from django.utils.translation import gettext_lazy as _
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    skills = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Skill.objects.all(),
-        required=False
-    )
+    skills = SkillsSerializer(many=True)
 
     class Meta:
         model=CustomUser
