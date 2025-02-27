@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import (
 
 
 urlpatterns = [
-    path('', views.home, name="home"),
     path('register/', views.register, name="register"),
     path('verify/<uidb64>/<token>/', views.verifyAccountView.as_view(), name="verify"),
     path('api/token/', views.CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
