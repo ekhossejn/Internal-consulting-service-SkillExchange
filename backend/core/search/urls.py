@@ -8,5 +8,7 @@ urlpatterns = [
     path('requests/get/', views.requestsGet),
     path('request/get/<str:_id>/', views.requestGet),
 
+    path('skills/get/', views.skillsGet),
+
     path('user/<str:_id>/review/create/', views.reviewCreate)
 ]

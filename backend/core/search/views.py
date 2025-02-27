@@ -1,8 +1,7 @@
 from django.shortcuts import render
-from users.models import Request, Review
+from users.models import Request, Review, Skill
+from users.serializer import RequestsSerializer, ReviewsSerializer, SkillsSerializer
 from authentication.models import CustomUser
-from users.serializer import RequestsSerializer
-from users.serializer import ReviewsSerializer
 from authentication.serializer import CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -72,3 +71,10 @@ def reviewCreate(request, _id):
         return Response(review_serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def skillsGet(request):
+    skills = Skill.objects.all()
+    serializer = SkillsSerializer(skills, many=True)
+    return Response(serializer.data)
