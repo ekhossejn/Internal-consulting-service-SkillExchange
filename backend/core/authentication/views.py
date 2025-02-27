@@ -18,10 +18,6 @@ from .models import CustomUser
 
 from rest_framework import status
 
-@api_view(['GET'])
-def home(request):
-    return Response("home")
-
 def validate_password(password):
     if len(password) < 8:
         return "Password must be at least 8 characters long."
@@ -29,21 +25,22 @@ def validate_password(password):
         return "Password must contain at least one digit."
     if not any(char.isalpha() for char in password):
         return "Password must contain at least one letter."
-    # Добавьте другие требования к паролю по необходимости
     return None
 
 @api_view(['POST'])
 def register(request):
-    data = request.data 
-
-    # Валидация пароля
-    password_error = validate_password(data['password'])
-    if password_error:
-        return Response({'details': password_error}, status=status.HTTP_400_BAD_REQUEST)
-
+    if 'password' not in request.data:
+        return Response({'details': 'password is required'}, status=status.HTTP_400_BAD_REQUEST)
+    validate_password_error = validate_password(request.data['password'])
+    if validate_password_error:
+        return Response({'details': validate_password_error}, status=status.HTTP_400_BAD_REQUEST)
+    
+    request.data['password'] = make_password(request.data['password'])
     try:
-        user = CustomUser.objects.create(email=data['email'], password=make_password(data['password']), is_active = False)
-
+        serializer = CustomUserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        
         email_subject = "Verify your email"
         message = render_to_string(
             'verification.html',
@@ -54,7 +51,7 @@ def register(request):
                 'token': generate_token.make_token(user)
             }
         )
-        email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [data['email']])
+        email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [request.data['email']])
         email_message.send()
 
         serialize = CustomUserSerializer(user, many=False)
