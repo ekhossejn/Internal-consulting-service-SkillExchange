@@ -2,7 +2,7 @@ from django.shortcuts import render
 from users.models import Request, Review, Skill
 from users.serializer import RequestsSerializer, ReviewsSerializer, SkillsSerializer
 from authentication.models import CustomUser
-from authentication.serializer import CustomUserSerializer
+from users.serializer import CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -30,7 +30,7 @@ def userGet(request, _id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def requestsGet(request):
-    requests = Request.objects.exclude(author = request.user)
+    requests = Request.objects.filter(isActive = True).exclude(author = request.user)
     serializer = RequestsSerializer(requests, many=True)
     return Response(serializer.data)
 
@@ -38,7 +38,7 @@ def requestsGet(request):
 @permission_classes([IsAuthenticated])
 def requestGet(request, _id):
     try:
-        gotten_request = Request.objects.get(id = _id)
+        gotten_request = Request.objects.filter(isActive=True).get(id = _id)
     except Request.DoesNotExist:
         return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
     if request.user.id == gotten_request.author.id:
