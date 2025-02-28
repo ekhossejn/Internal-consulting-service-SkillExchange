@@ -1,15 +1,11 @@
 from rest_framework import serializers
 from .models import CustomUser
-from users.serializer import SkillsSerializer
 from django.utils.translation import gettext_lazy as _
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    skills = SkillsSerializer(many=True)
-
+class CustomUserBaseInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
-        fields=['id', 'email', 'company', 'image', 'name', 'rating_sum', 'rating_count', 'skills', 'is_active', 'is_staff']
-    
+        fields='__all__'
     def validate_email(self, value):
         domain = value.split('@')[1]
         bad_domains = {'rambler.ru', 'yandex.ru'}
@@ -17,6 +13,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 _("%(value)s is not a corporative email") % {'value': value}
             )
+        return value
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):

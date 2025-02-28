@@ -24,7 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=20, null=True)
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
-    skills = models.ManyToManyField('users.Skill', related_name='users')
+    skills = models.ManyToManyField('users.Skill', related_name='users', blank=True)
 
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False) 

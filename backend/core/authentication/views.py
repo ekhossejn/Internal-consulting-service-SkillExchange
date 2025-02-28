@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.views.generic import View
 
-from .serializer import CustomUserSerializer, CustomTokenObtainPairSerializer
+from .serializer import CustomUserBaseInfoSerializer, CustomTokenObtainPairSerializer
 from .models import CustomUser
 
 from rest_framework import status
@@ -37,7 +37,7 @@ def register(request):
     
     request.data['password'] = make_password(request.data['password'])
     try:
-        serializer = CustomUserSerializer(data=request.data)
+        serializer = CustomUserBaseInfoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         
@@ -54,7 +54,7 @@ def register(request):
         email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [request.data['email']])
         email_message.send()
 
-        serialize = CustomUserSerializer(user, many=False)
+        serialize = CustomUserBaseInfoSerializer(user, many=False)
         return Response(serialize.data)
     except Exception as e:
         message = {'details': e.args[0]}
