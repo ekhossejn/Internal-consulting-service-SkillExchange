@@ -7,19 +7,6 @@ class SkillsSerializer(serializers.ModelSerializer):
         model=Skill
         fields=['name']
 
-class RequestsSerializer(serializers.ModelSerializer):
-    requiredSkills = serializers.PrimaryKeyRelatedField(
-        many=True,
-        queryset=Skill.objects.all(),
-        required=False
-    )
-
-
-    class Meta:
-        model=Request
-        fields='__all__'
-        read_only_fields = ['author']
-
 class CustomUserSerializer(serializers.ModelSerializer):
     skills = SkillsSerializer(many=True)
     documents = serializers.SerializerMethodField()
@@ -27,7 +14,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=CustomUser
-        fields=['id', 'email', 'company', 'image', 'name', 'rating_sum', 'rating_count', 'documents', 'skills', 'reviews', 'is_active', 'is_staff']
+        fields=['id', 'image', 'name', 'rating_sum', 'rating_count', 'skills', 'documents', 'reviews']
     
     def validate_email(self, value):
         domain = value.split('@')[1]
@@ -45,6 +32,31 @@ class CustomUserSerializer(serializers.ModelSerializer):
         reviews = Review.objects.filter(reviewee=obj)
         return ReviewsSerializer(reviews, many=True).data
 
+class RequestsSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    emails = serializers.SerializerMethodField()
+    requiredSkills = SkillsSerializer(many=True)
+
+    class Meta:
+        model=Request
+        fields=['image', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
+
+    def get_image(self, obj):
+        user = CustomUser.objects.get(id = obj.author.id)
+        return CustomUserSerializer(user, many=False).data['image']
+
+    def get_emails(self, obj):
+        responded_users = obj.respondedUsers
+        emails = []
+        for user in responded_users.all():
+            try: 
+                gotten_user = CustomUser.objects.get(id = user.id)
+                emails.append(gotten_user.email)
+            except Request.DoesNotExist: 
+                continue
+        return emails
+
+    
 class RequestsShortInfoSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     class Meta:

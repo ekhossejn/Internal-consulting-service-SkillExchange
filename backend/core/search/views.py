@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from users.models import Request, Review, Skill
-from users.serializer import RequestsSerializer, ReviewsSerializer, SkillsSerializer
+from users.serializer import RequestsShortInfoSerializer,RequestsSerializer, ReviewsSerializer, SkillsSerializer
 from authentication.models import CustomUser
 from users.serializer import CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
@@ -31,7 +31,7 @@ def userGet(request, _id):
 @permission_classes([IsAuthenticated])
 def requestsGet(request):
     requests = Request.objects.filter(isActive = True).exclude(author = request.user)
-    serializer = RequestsSerializer(requests, many=True)
+    serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
