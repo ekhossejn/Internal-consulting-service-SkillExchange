@@ -6,7 +6,7 @@ import Loader from "../Loader";
 import Message from "../Message";
 import Skill from "../Skill";
 
-function RequestScreen({ params }) {
+function MyRequestScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -22,7 +22,7 @@ function RequestScreen({ params }) {
       setLoading(true);
       try {
         const { data: mainData } = await axios.get(
-          `/search/request/get/${id}/`,
+          `/profile/request/get/${id}/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -88,13 +88,13 @@ function RequestScreen({ params }) {
             <div className="d-grid gap-2">
               <Button className="btn btn-md btn-success" type="submit">
                 {" "}
-                Откликнуться{" "}
+                Вернуть отклики{" "}
               </Button>
             </div>
           </div>
           <div style={{ flex: 2 }}>
             <h2>{mainInfo.name}</h2>
-            <h2>{mainInfo.createdAt}</h2>
+            <h3>{mainInfo.createdAt}</h3>
             {mainInfo.requiredSkills.map((skill) => (
               <Col key={skill.id} sm={12} md={6} lg={4} xl={3}>
                 <Skill skill={skill} />
@@ -108,4 +108,4 @@ function RequestScreen({ params }) {
   );
 }
 
-export default RequestScreen;
+export default MyRequestScreen;

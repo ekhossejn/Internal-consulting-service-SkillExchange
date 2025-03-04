@@ -17,6 +17,9 @@ import Company from "./components/screens/Company";
 import MyRequests from "./components/screens/MyRequests";
 import RequestScreen from "./components/screens/RequestScreen";
 import MakeRequest from "./components/screens/MakeRequest";
+import MyRequestScreen from "./components/screens/MyRequestScreen";
+import UserScreen from "./components/screens/UserScreen";
+import MakeReview from "./components/screens/MakeReview";
 
 function Layout() {
   const location = useLocation();
@@ -41,12 +44,27 @@ function Layout() {
         <Route
           exact
           path="/profile/requests/:id"
+          element={<MyRequestScreen />}
+        ></Route>
+        <Route
+          exact
+          path="/search/requests/:id"
           element={<RequestScreen />}
+        ></Route>
+        <Route
+          exact
+          path="/search/users/:id"
+          element={<UserScreen />}
         ></Route>
         <Route
           exact
           path="/profile/requests/create"
           element={<MakeRequest />}
+        ></Route>
+        <Route
+          exact
+          path="/search/users/:id/comment"
+          element={<MakeReview />}
         ></Route>
       </Routes>
     </>
