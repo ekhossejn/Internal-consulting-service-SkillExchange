@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Request from "../Request";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
 import Loader from "../Loader";
 import Message from "../Message";
 import {
@@ -14,13 +14,14 @@ import {
   InputGroup,
 } from "react-bootstrap";
 
-function MakeRequest() {
+function MakeReview({ params }) {
+  const { id } = useParams();
   const [message, setMessage] = useState("");
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [makeInfo, setMakeInfo] = useState();
-  const [name, setName] = useState("");
   const [text, setText] = useState("");
+  const [rating, setRating] = useState("");
   const skills = useState([]);
 
   const navigate = useNavigate();
@@ -29,14 +30,14 @@ function MakeRequest() {
 
   useEffect(() => {
     if (error) {
-      if (error === "Given token not valid for any token type")  {
+      if (error === "Given token not valid for any token type") {
         navigate("/login");
       }
       setMessage(error);
     }
 
     if (makeInfo) {
-      navigate("/profile/requests");
+      navigate(`/search/users/get/${id}/`);
     }
   }, [error, makeInfo]);
 
@@ -53,10 +54,10 @@ function MakeRequest() {
       };
 
       const { data } = await axios.put(
-        `/profile/request/create/`,
+        `/search/user/${id}/review/create/`,
         {
-          name: name,
           text: text,
+          rating: rating
         },
         config
       );
@@ -87,18 +88,8 @@ function MakeRequest() {
               <Card>
                 <Card.Body>
                   <Form onSubmit={makeHandler}>
-                    <Form.Group className="mb-3" controlId="name">
-                      <Form.Label>Название запроса</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder=""
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
-                    </Form.Group>
                     <Form.Group className="mb-3" controlId="text">
-                      <Form.Label>Текст запроса</Form.Label>
+                      <Form.Label>Текст отзыва</Form.Label>
                       <Form.Control
                         type="text"
                         placeholder=""
@@ -107,11 +98,26 @@ function MakeRequest() {
                         required
                       />
                     </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Оценка</Form.Label>
+                      <Form.Select
+                        value={rating}
+                        onChange={(e) => setRating(e.target.value)}
+                        required
+                      >
+                        <option value=""></option>
+                        {[...Array(5).keys()].map((num) => (
+                          <option key={num + 1} value={num + 1}>
+                            {num + 1}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
                     <br />
                     <div className="d-grid gap-2">
                       <Button className="btn btn-md btn-success" type="submit">
                         {" "}
-                        Создать{" "}
+                        Отправить{" "}
                       </Button>
                     </div>
                   </Form>
@@ -126,4 +132,4 @@ function MakeRequest() {
   );
 }
 
-export default MakeRequest;
+export default MakeReview;
