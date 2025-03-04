@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-@39t32z$ko*8&&aabtm6a#cnwf_@7=d@1bv*@_zx_)ul93_5f5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -103,7 +103,7 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': 'monorail.proxy.rlwy.net',
         'PORT': '24034',
-        'CONN_MAX_AGE': 60,
+        'CONN_MAX_AGE': 300,
     }
 }
 

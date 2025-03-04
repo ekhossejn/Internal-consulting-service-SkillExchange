@@ -7,6 +7,7 @@ urlpatterns = [
 
     path('requests/get/', views.requestsGet),
     path('request/get/<str:_id>/', views.requestGet),
+    path('request/respond/<str:_id>/', views.requestRespond),
 
     path('skills/get/', views.skillsGet),
 

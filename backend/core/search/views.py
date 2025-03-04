@@ -46,6 +46,25 @@ def requestGet(request, _id):
     serializer = RequestsSerializer(gotten_request, many=False)
     return Response(serializer.data)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def requestRespond(request, _id):
+    try:
+        gotten_request = Request.objects.filter(isActive=True).get(id = _id)
+    except Request.DoesNotExist:
+        return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if request.user.id == gotten_request.author.id:
+        return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_404_NOT_FOUND)
+    respondedUsers = gotten_request.respondedUsers
+    user = CustomUser.objects.get(id=request.user.id)
+    if user not in respondedUsers.all():
+        respondedUsers.add(CustomUser.objects.get(id=request.user.id))
+    serializer = RequestsSerializer(gotten_request, data={'respondedUsers': respondedUsers}, partial=True)
+    serializer.is_valid()
+    serializer.save()
+    return Response(serializer.data)
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def reviewCreate(request, _id):
