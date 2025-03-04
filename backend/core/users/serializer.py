@@ -14,7 +14,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=CustomUser
-        fields=['id', 'image', 'name', 'rating_sum', 'rating_count', 'skills', 'documents', 'reviews']
+        fields=['id', 'image', 'name', 'rating_sum', 'rating_count', 'email', 'skills', 'documents', 'reviews']
     
     def validate_email(self, value):
         domain = value.split('@')[1]
