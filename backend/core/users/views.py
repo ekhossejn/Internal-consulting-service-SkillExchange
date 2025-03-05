@@ -2,8 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from authentication.models import CustomUser  
-from .models import Request, Skill, Document, Review
-from .serializer import RequestsShortInfoSerializer, RequestsSerializer, DocumentsSerializer, ReviewsSerializer
+from .models import Request, Skill, Company
+from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
@@ -11,14 +11,26 @@ from .serializer import CustomUserSerializer
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def imageGet(request):
+def companyGet(request):
     try:
-        gotten_request = CustomUser.objects.get(id=request.user.id)
+        user_obj = CustomUser.objects.get(id=request.user.id)
     except Request.DoesNotExist:
         return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
-    if not gotten_request.image:
+    if not user_obj.company:
+        return Response({"detail" : "Пользователь не относится ни к какой организации"}, status=status.HTTP_404_NOT_FOUND)
+    company = CompanySerializer(user_obj.company, many=False)
+    return Response(company.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def imageGet(request):
+    try:
+        user_obj = CustomUser.objects.get(id=request.user.id)
+    except Request.DoesNotExist:
+        return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if not user_obj.image:
         return Response({"detail" : "У пользователя нет аватарки"}, status=status.HTTP_404_NOT_FOUND)
-    return Response(gotten_request.image.url)
+    return Response(user_obj.image.url)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])

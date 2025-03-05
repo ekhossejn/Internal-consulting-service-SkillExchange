@@ -1,6 +1,11 @@
 from rest_framework import serializers
-from .models import Request, Document, Review, Skill
+from .models import Request, Document, Review, Skill, Company
 from authentication.models import CustomUser
+
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Company
+        fields='__all__'
 
 class SkillsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,7 +61,6 @@ class RequestsSerializer(serializers.ModelSerializer):
                 continue
         return emails
 
-    
 class RequestsShortInfoSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     class Meta:

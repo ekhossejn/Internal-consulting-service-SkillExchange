@@ -2,6 +2,8 @@ from users import views
 from django.urls import path
 
 urlpatterns = [
+    path('company/get/', views.companyGet),
+
     path('image/get/', views.imageGet),
 
     path('request/<str:_id>/active/change/', views.requestActiveChange),
