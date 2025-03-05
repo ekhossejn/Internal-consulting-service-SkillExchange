@@ -5,7 +5,7 @@ from authentication.models import CustomUser
 class SkillsSerializer(serializers.ModelSerializer):
     class Meta:
         model=Skill
-        fields=['name']
+        fields='__all__'
 
 class CustomUserSerializer(serializers.ModelSerializer):
     skills = SkillsSerializer(many=True)
@@ -35,11 +35,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class RequestsSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     emails = serializers.SerializerMethodField()
-    requiredSkills = SkillsSerializer(many=True)
+    requiredSkills = SkillsSerializer(many=True, required=False)
 
     class Meta:
         model=Request
-        fields=['image', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
+        fields=['id', 'image', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
 
     def get_image(self, obj):
         user = CustomUser.objects.get(id = obj.author.id)
