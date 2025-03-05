@@ -40,5 +40,5 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __getattribute__(self, name):
         attr = models.Model.__getattribute__(self, name)
         if name == 'name' and not attr:
-            return f'user/{super(CustomUser, self).__getattribute__("id")}'
+            return f'user/{self.email}'
         return attr
