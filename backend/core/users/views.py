@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from authentication.models import CustomUser  
-from .models import Request, Document, Review
+from .models import Request, Skill, Document, Review
 from .serializer import RequestsShortInfoSerializer, RequestsSerializer, DocumentsSerializer, ReviewsSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
@@ -24,9 +24,14 @@ def imageGet(request):
 @permission_classes([IsAuthenticated])
 def requestCreate(request):
     data = request.data
+    skills_ids = data['requiredSkills']
+    data.pop('requiredSkills', None)
     serializer = RequestsSerializer(data=data)
     if serializer.is_valid():
-        serializer.save(author = request.user)
+        request = serializer.save(author = request.user)
+        for skill_id in skills_ids:
+            skill = Skill.objects.get(id=skill_id)
+            request.requiredSkills.add(skill)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -42,6 +47,18 @@ def requestGet(request, _id):
         return Response({"detail": "У вас нет доступа для просмотра этого запроса"}, status=status.HTTP_403_FORBIDDEN)
     serializer = RequestsSerializer(gotten_request, many=False)
     return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def requestDelete(request, _id):
+    try:
+        gotten_request = Request.objects.get(id = _id)
+    except Request.DoesNotExist:
+        return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if request.user.id != gotten_request.author.id:
+        return Response({"detail": "У вас нет доступа для удаления этого запроса"}, status=status.HTTP_403_FORBIDDEN)
+    gotten_request.delete()
+    return Response({"detail": "Запрос успешно удален"})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
