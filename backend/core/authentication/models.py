@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from users.models import Company
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -17,9 +18,13 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
         return self.create_user(email, password, **extra_fields)
 
+def get_default_company():
+    # TODO: специальная для superuser
+    return Company.objects.get(id=1)
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    company = models.ForeignKey('users.Company', on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, default=get_default_company())
     image = models.ImageField(default='default.jpg')
     name = models.CharField(max_length=20, null=True)
     rating_sum = models.IntegerField(default=0)
@@ -40,5 +45,5 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     def __getattribute__(self, name):
         attr = models.Model.__getattribute__(self, name)
         if name == 'name' and not attr:
-            return f'user/{self.email}'
+            return f'{self.email.split('@')[0][:20]}'
         return attr
