@@ -16,6 +16,8 @@ from django.views.generic import View
 from .serializer import CustomUserBaseInfoSerializer, CustomTokenObtainPairSerializer
 from .models import CustomUser
 
+from users.models import Company
+
 from rest_framework import status
 
 def validate_password(password):
@@ -39,7 +41,13 @@ def register(request):
     try:
         serializer = CustomUserBaseInfoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        email_domain = request.data['email'].split('@')[1]
+        try:
+            company = Company.objects.get(domain=email_domain)
+        except Company.DoesNotExist:
+            message = {'details': 'User\'s email is not associated with any registered company'}
+            return Response(message, status=status.HTTP_400_BAD_REQUEST)   
+        user = serializer.save(company=company)
         
         email_subject = "Verify your email"
         message = render_to_string(
