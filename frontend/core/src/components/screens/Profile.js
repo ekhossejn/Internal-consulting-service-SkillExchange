@@ -95,11 +95,13 @@ function Profile() {
                 <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating_sum}</h2>
               </div>
             </div>
+            <Card className="my-3 p-3 rounded" style={{ backgroundColor: "var(--bs-light)"}}>
             {mainInfo.skills.map((skill) => (
               <Col key={skill.id} sm={12} md={6} lg={4} xl={3}>
                 <Skill skill={skill} />
               </Col>
             ))}
+            </Card>
             {mainInfo.documents.map((document) => (
             <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
               <Document document={document} />
