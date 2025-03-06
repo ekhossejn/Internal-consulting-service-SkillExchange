@@ -95,11 +95,16 @@ function RequestScreen({ params }) {
           <div style={{ flex: 2 }}>
             <h2>{mainInfo.name}</h2>
             <h2>{mainInfo.createdAt}</h2>
-            {mainInfo.requiredSkills.map((skill) => (
-              <Col key={skill.id} sm={12} md={6} lg={4} xl={3}>
-                <Skill skill={skill} />
-              </Col>
-            ))}
+            <Card
+              className="my-3 p-3 rounded"
+              style={{ backgroundColor: "var(--bs-light)" }}
+            >
+              {mainInfo.requiredSkills.map((skill) => (
+                <Col key={skill.id} sm={12} md={6} lg={4} xl={3}>
+                  <Skill skill={skill} />
+                </Col>
+              ))}
+            </Card>
             <h3>{mainInfo.text}</h3>
           </div>
         </div>
