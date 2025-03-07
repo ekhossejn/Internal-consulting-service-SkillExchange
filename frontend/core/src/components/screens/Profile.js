@@ -58,10 +58,13 @@ function Profile() {
         <div
           style={{
             display: "flex",
-            gap: "550px",
           }}
         >
-          <div>
+          <div
+            style={{
+              flex: 2,
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -95,24 +98,40 @@ function Profile() {
                 <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating_sum}</h2>
               </div>
             </div>
-            <Card className="my-3 p-3 rounded" style={{ backgroundColor: "var(--bs-light)"}}>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            <Card
+              className="my-3 p-3 rounded"
+              style={{ backgroundColor: "var(--bs-light)" }}
+            >
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mainInfo.skills.map((skill) => (
                   <Skill key={skill.id} skill={skill} />
                 ))}
               </div>
             </Card>
             {mainInfo.documents.map((document) => (
-            <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
-              <Document document={document} />
-            </Col>
-          ))}
+              <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
+                <Document document={document} />
+              </Col>
+            ))}
           </div>
-          {mainInfo.reviews.map((review) => (
-            <Col key={review.id} sm={12} md={6} lg={4} xl={3}>
-              <Review review={review} />
-            </Col>
-          ))}
+          <div
+            style={{
+              flex: 1,
+            }}
+          >
+            {mainInfo.reviews.map((review) => (
+              <Col
+                key={review.id}
+                sm={12}
+                md={6}
+                lg={4}
+                xl={3}
+                style={{ width: "100%" }}
+              >
+                <Review review={review} />
+              </Col>
+            ))}
+          </div>
         </div>
       )}
     </Container>
