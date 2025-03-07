@@ -60,10 +60,13 @@ function UserScreen({ params }) {
         <div
           style={{
             display: "flex",
-            gap: "550px",
           }}
         >
-          <div>
+          <div
+            style={{
+              flex: 2,
+            }}
+          >
             <div
               style={{
                 display: "flex",
@@ -125,9 +128,20 @@ function UserScreen({ params }) {
               </Col>
             ))}
           </div>
-          <div>
+          <div
+            style={{
+              flex: 1,
+            }}
+          >
             {mainInfo.reviews.map((review) => (
-              <Col key={review.id} sm={12} md={6} lg={4} xl={3}>
+              <Col
+                key={review.id}
+                sm={12}
+                md={6}
+                lg={4}
+                xl={3}
+                style={{ width: "100%" }}
+              >
                 <Review review={review} />
               </Col>
             ))}
