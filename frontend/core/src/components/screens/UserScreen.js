@@ -113,11 +113,11 @@ function UserScreen({ params }) {
               className="my-3 p-3 rounded"
               style={{ backgroundColor: "var(--bs-light)" }}
             >
-              {mainInfo.skills.map((skill) => (
-                <Col key={skill.id} sm={12} md={6} lg={4} xl={3}>
-                  <Skill skill={skill} />
-                </Col>
-              ))}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+                {mainInfo.skills.map((skill) => (
+                  <Skill key={skill.id} skill={skill} />
+                ))}
+              </div>
             </Card>
             {mainInfo.documents.map((document) => (
               <Col key={document.id} sm={12} md={6} lg={4} xl={3}>

@@ -21,15 +21,36 @@ function MakeRequest() {
   const [makeInfo, setMakeInfo] = useState();
   const [name, setName] = useState("");
   const [text, setText] = useState("");
-  const skills = useState([]);
+  const [allSkills, setAllSkills] = useState([]);
+  const [skills, setSkills] = useState([]);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
 
   useEffect(() => {
+    const fetchAllSkills = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get(`/search/skills/get/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setAllSkills(data);
+      } catch (error) {
+        setError(error.response?.data?.detail || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllSkills();
+  }, []);
+
+  useEffect(() => {
     if (error) {
-      if (error === "Given token not valid for any token type")  {
+      if (error === "Given token not valid for any token type") {
         navigate("/login");
       }
       setMessage(error);
@@ -57,6 +78,7 @@ function MakeRequest() {
         {
           name: name,
           text: text,
+          requiredSkills: skills,
         },
         config
       );
@@ -97,6 +119,35 @@ function MakeRequest() {
                         required
                       />
                     </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Необходимые скиллы</Form.Label>
+                      <Form.Select
+                        multiple
+                        value={skills}
+                        onChange={(e) =>
+                          setSkills(
+                            [...e.target.selectedOptions].map(
+                              (option) => option.value
+                            )
+                          )
+                        }
+                        required
+                      >
+                        {allSkills.map((skill) => (
+                          <option key={skill.id} value={skill.id}>
+                            {skill.name}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                    <Button
+                      className="btn btn-danger btn-sm mt-2"
+                      onClick={() => setSkills([])}
+                    >
+                      Очистить выбор
+                    </Button>
+                    <br />
+                    <br />
                     <Form.Group className="mb-3" controlId="text">
                       <Form.Label>Текст запроса</Form.Label>
                       <Form.Control
