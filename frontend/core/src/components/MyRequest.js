@@ -5,14 +5,16 @@ import { useNavigate } from "react-router-dom";
 function MyRequest({ myRequest }) {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const NavigateToRequestPage = () => {
     navigate(`/profile/requests/${myRequest.id}/`);
   };
 
   return (
-    <Card className="my-3 p-3 rounded" onClick={handleClick} style={{ cursor: "pointer" }}>
+    <Card className="my-3 p-3 rounded">
       <Card.Body>
-        <Card.Title as="h3">{myRequest.name}</Card.Title>
+        <Card.Title as="h3" onClick={NavigateToRequestPage} style={{ cursor: "pointer" }}>
+          {myRequest.name}
+        </Card.Title>
       </Card.Body>
     </Card>
   );

@@ -37,7 +37,7 @@ function MakeReview({ params }) {
     }
 
     if (makeInfo) {
-      navigate(`/search/users/get/${id}/`);
+      navigate(`/search/users/${id}/`);
     }
   }, [error, makeInfo]);
 

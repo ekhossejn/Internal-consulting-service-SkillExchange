@@ -15,6 +15,37 @@ function MyRequests() {
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [requests, setRequests] = useState([]);
+  const [deleteInfo, setDeleteInfo] = useState();
+
+  const Delete = async (e, id) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/profile/request/delete/${id}/`,
+        {},
+        config
+      );
+
+      setDeleteInfo(data);
+    } catch (error) {
+      setError(
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -62,6 +93,7 @@ function MyRequests() {
           {requests.map((request) => (
             <Col key={request.id} sm={12} md={6} lg={4} xl={3}>
               <MyRequest myRequest={request} />
+              <button class="btn btn-sm btn-primary" onClick={(e) => Delete(e, request.id)}>Удалить</button>
             </Col>
           ))}
         </Row>

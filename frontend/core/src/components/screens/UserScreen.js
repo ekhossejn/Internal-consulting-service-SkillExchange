@@ -114,7 +114,7 @@ function UserScreen({ params }) {
             </div>
             <Card
               className="my-3 p-3 rounded"
-              style={{ backgroundColor: "var(--bs-light)" }}
+              style={{ backgroundColor: "var(--bs-light)", width: "95%" }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mainInfo.skills.map((skill) => (
@@ -131,6 +131,7 @@ function UserScreen({ params }) {
           <div
             style={{
               flex: 1,
+              alignItems: 'center',
             }}
           >
             {mainInfo.reviews.map((review) => (
@@ -147,6 +148,7 @@ function UserScreen({ params }) {
             ))}
             <button
               class="btn btn-lg btn-primary"
+              style={{ width: "100%" }}
               onClick={() => navigate(`/search/users/${id}/comment/`)}
             >
               Оставить отзыв

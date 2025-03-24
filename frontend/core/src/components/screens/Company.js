@@ -42,9 +42,18 @@ function Company() {
   return (
     <Container>
       <br />
-      <h1>{mainInfo.name}</h1>
-      <h1>{mainInfo.domain}</h1>
-      <h1>{mainInfo.description}</h1>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h1>{mainInfo.name}</h1>
+        <h1>{mainInfo.domain}</h1>
+        <h1>{mainInfo.description}</h1>
+      </div>
     </Container>
   );
 }
