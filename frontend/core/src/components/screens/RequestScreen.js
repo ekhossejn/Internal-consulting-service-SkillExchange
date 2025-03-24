@@ -97,7 +97,7 @@ function RequestScreen({ params }) {
             <h2>{mainInfo.createdAt}</h2>
             <Card
               className="my-3 p-3 rounded"
-              style={{ backgroundColor: "var(--bs-light)" }}
+              style={{ backgroundColor: "var(--bs-light)", minHeight: "8vh" }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mainInfo.requiredSkills.map((skill) => (

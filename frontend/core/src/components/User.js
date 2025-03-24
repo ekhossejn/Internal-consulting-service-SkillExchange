@@ -9,7 +9,7 @@ function User({ user }) {
     navigate(`/search/users/${user.id}/`);
   };
   return (
-    <Card className="my-3 p-3 rounded" onClick={handleClick} style={{ cursor: "pointer" }}>
+    <Card className="my-3 p-3 rounded" onClick={handleClick} style={{ cursor: "pointer", backgroundColor: "var(--bs-light)"  }}>
       <Card.Body>
         <Card.Title as="h3">{user.name}</Card.Title>
       </Card.Body>

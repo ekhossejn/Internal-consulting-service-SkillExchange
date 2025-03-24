@@ -107,7 +107,7 @@ function Profile() {
             </div>
             <Card
               className="my-3 p-3 rounded"
-              style={{ backgroundColor: "var(--bs-light)", width: "95%" }}
+              style={{ backgroundColor: "var(--bs-light)", width: "90%", minHeight: "8vh" }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mainInfo.skills.map((skill) => (

@@ -131,7 +131,6 @@ function MakeRequest() {
                             )
                           )
                         }
-                        required
                       >
                         {allSkills.map((skill) => (
                           <option key={skill.id} value={skill.id}>
