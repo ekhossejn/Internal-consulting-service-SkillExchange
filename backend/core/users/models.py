@@ -19,7 +19,7 @@ class Request(models.Model):
     name = models.CharField(max_length=20)
     requiredSkills = models.ManyToManyField('Skill', related_name='requests', blank=True)
     text = models.CharField(max_length=500)
-    createdAt = models.TimeField(auto_now_add=True)
+    createdAt = models.DateTimeField(auto_now_add=True)
     isActive = models.BooleanField(default=True)
     respondedUsers = models.ManyToManyField('authentication.CustomUser', related_name='responded_requests', blank=True)
     def __str__(self):
