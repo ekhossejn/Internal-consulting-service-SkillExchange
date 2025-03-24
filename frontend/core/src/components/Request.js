@@ -10,7 +10,7 @@ function Request({ request }) {
   };
 
   return (
-    <Card className="my-3 p-3 rounded" onClick={handleClick} style={{ cursor: "pointer" }}>
+    <Card className="my-3 p-3 rounded" onClick={handleClick} style={{ cursor: "pointer", backgroundColor: "var(--bs-light)" }}>
       <Card.Body>
         <Card.Title as="h3">{request.name}</Card.Title>
       </Card.Body>

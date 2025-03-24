@@ -10,9 +10,9 @@ function MyRequest({ myRequest }) {
   };
 
   return (
-    <Card className="my-3 p-3 rounded">
+    <Card className="my-3 p-3 rounded" style={{ backgroundColor: "var(--bs-light)" }}>
       <Card.Body>
-        <Card.Title as="h3" onClick={NavigateToRequestPage} style={{ cursor: "pointer" }}>
+        <Card.Title as="h3" onClick={NavigateToRequestPage} style={{ cursor: "pointer"}}>
           {myRequest.name}
         </Card.Title>
       </Card.Body>
