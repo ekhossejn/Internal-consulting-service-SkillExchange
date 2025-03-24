@@ -9,6 +9,13 @@ import Review from "../Review";
 import Skill from "../Skill";
 import Document from "../Document";
 
+function GetRating(ratingSum, reviewsNumber) {
+  if (reviewsNumber == 0) {
+    return ratingSum;
+  } 
+  return ratingSum / reviewsNumber;
+}
+
 function Profile() {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -95,7 +102,7 @@ function Profile() {
               </div>
               <div>
                 <h2>{mainInfo.name}</h2>
-                <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating_sum}</h2>
+                <h2 style={{ marginLeft: "100px" }}>{GetRating(mainInfo.rating_sum, mainInfo.rating_count)}</h2>
               </div>
             </div>
             <Card

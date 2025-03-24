@@ -9,6 +9,13 @@ import Review from "../Review";
 import Skill from "../Skill";
 import Document from "../Document";
 
+function GetRating(ratingSum, reviewsNumber) {
+  if (reviewsNumber == 0) {
+    return ratingSum;
+  } 
+  return ratingSum / reviewsNumber;
+}
+
 function UserScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -97,7 +104,7 @@ function UserScreen({ params }) {
               </div>
               <div>
                 <h2>{mainInfo.name}</h2>
-                <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating_sum}</h2>
+                <h2 style={{ marginLeft: "100px" }}>{GetRating(mainInfo.rating_sum, mainInfo.rating_count)}</h2>
                 <div className="d-grid gap-2">
                   {emailVisible ? (
                     <p className="text-success">{mainInfo.email}</p>
