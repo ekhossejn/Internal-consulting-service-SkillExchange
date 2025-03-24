@@ -95,52 +95,15 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 from decouple import config
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': 'monorail.proxy.rlwy.net',
-        'PORT': '24034',
-        'CONN_MAX_AGE': 300,
+        'NAME': config("DB_NAME"),
+        'USER': config("DB_USER"),
+        'PASSWORD': config("DB_PASSWORD"),
+        'HOST':  config("DB_HOST"),
+        'PORT':  config("DB_PORT"),
     }
-}'''
-
-'''
-# Add these at the top of your settings.py
-import os
-from dotenv import load_dotenv
-from urllib.parse import urlparse
-
-load_dotenv()
-
-# Replace the DATABASES section of your settings.py with this
-tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
-    }
-}
-'''
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'skillexchange',
-        'USER': 'kate',
-        'PASSWORD': 'Abu3nda3nce!',
-        'HOST': 'rc1b-zwfcl2hr1u0s221a.mdb.yandexcloud.net',
-        'PORT': '6432',
-    }
-
 }
 
 AUTH_PASSWORD_VALIDATORS = [
