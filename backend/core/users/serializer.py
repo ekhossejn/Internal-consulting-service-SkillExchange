@@ -16,10 +16,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     skills = SkillsSerializer(many=True)
     documents = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
+    rating =  serializers.SerializerMethodField()
 
     class Meta:
         model=CustomUser
-        fields=['id', 'image', 'name', 'rating_sum', 'rating_count', 'email', 'skills', 'documents', 'reviews']
+        fields=['id', 'image', 'name', 'rating', 'email', 'skills', 'documents', 'reviews']
     
     def validate_email(self, value):
         domain = value.split('@')[1]
@@ -36,6 +37,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         reviews = Review.objects.filter(reviewee=obj)
         return ReviewsSerializer(reviews, many=True).data
+
+    def get_rating(self, obj):
+        if obj.rating_count == 0:
+            return 0
+        return obj.rating_sum // obj.rating_count
 
 class RequestsSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()

@@ -10,12 +10,34 @@ from rest_framework import status
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.db.models import F, Case, When, Value, IntegerField
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def usersGet(request):
-    user = CustomUser.objects.all().exclude(id = request.user.id)
-    serializer = CustomUserSerializer(user, many=True)
+    filter_skills = request.data.get('filter_skills', None)
+    filter_ratings = request.data.get('filter_ratings', None)
+
+    users = CustomUser.objects.all().exclude(id = request.user.id)
+
+    if filter_skills: 
+        if isinstance(filter_skills, list):
+            users = users.filter(skills__id__in=filter_skills).distinct()
+        else:
+            return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+        
+    if filter_ratings: 
+        if isinstance(filter_ratings, list):
+            users = users.annotate(
+                average_rating=Case(
+                When(rating_count=0, then=Value(0.0)),
+                default=F('rating_sum') / F('rating_count'),
+                output_field=IntegerField())
+            ).filter(average_rating__in=filter_ratings).distinct()
+        else:
+            return Response({"error": "filter_ratings must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = CustomUserSerializer(users, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -33,7 +55,28 @@ def userGet(request, _id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def requestsGet(request):
+    filter_skills = request.data.get('filter_skills', None)
+    filter_ratings = request.data.get('filter_ratings', None)
+
     requests = Request.objects.filter(isActive = True).exclude(author = request.user)
+
+    if filter_skills: 
+        if isinstance(filter_skills, list):
+            requests = requests.filter(requiredSkills__id__in=filter_skills).distinct()
+        else:
+            return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+        
+    if filter_ratings: 
+        if isinstance(filter_ratings, list):
+            requests = requests.annotate(
+                average_rating=Case(
+                When(author__rating_count=0, then=Value(0.0)),
+                default=F('author__rating_sum') / F('author__rating_count'),
+                output_field=IntegerField())
+            ).filter(average_rating__in=filter_ratings).distinct()
+        else:
+            return Response({"error": "filter_ratings must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+    
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
 
