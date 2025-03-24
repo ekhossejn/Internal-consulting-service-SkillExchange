@@ -8,9 +8,9 @@ class Document(models.Model):
         return (str)(self.owner)
 
 class Company(models.Model):
-    domain = models.CharField(max_length=255)
-    name = models.CharField(max_length=20)
-    description = models.CharField(max_length=200)
+    domain = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=50)
+    description = models.CharField(max_length=5000)
     def __str__(self):
         return self.name
 
