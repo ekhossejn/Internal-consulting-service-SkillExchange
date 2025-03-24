@@ -7,6 +7,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.template.loader import render_to_string
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -47,6 +50,22 @@ def requestGet(request, _id):
     return Response(serializer.data)
 
 
+def send_email(responded_user, gotten_request):
+    author = gotten_request.author
+    email_subject = "SkillExchange 1 new respond: User " + responded_user.name + " wants to help you!"
+    message = render_to_string(
+        'respond.html',
+        {
+            'user': responded_user,
+            'author': author,
+            'domain': 'localhost:3000',
+            'id': gotten_request.id,
+            'email': responded_user.email
+        }
+    )
+    email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [author.email])
+    email_message.send()
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def requestRespond(request, _id):
@@ -60,6 +79,7 @@ def requestRespond(request, _id):
     user = CustomUser.objects.get(id=request.user.id)
     if user not in respondedUsers.all():
         respondedUsers.add(CustomUser.objects.get(id=request.user.id))
+        send_email(request.user, gotten_request)
     serializer = RequestsSerializer(gotten_request, data={'respondedUsers': respondedUsers}, partial=True)
     serializer.is_valid()
     serializer.save()
