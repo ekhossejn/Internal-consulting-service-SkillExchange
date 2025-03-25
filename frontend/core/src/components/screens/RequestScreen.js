@@ -16,6 +16,37 @@ function RequestScreen({ params }) {
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
   });
+  const [respondInfo, setRespondInfo] = useState();
+
+  const Respond = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/search/request/respond/${id}/`,
+        {},
+        config
+      );
+
+      setRespondInfo(data);
+    } catch (error) {
+      setError(
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -86,10 +117,9 @@ function RequestScreen({ params }) {
             </div>
             <br />
             <div className="d-grid gap-2">
-              <Button className="btn btn-md btn-success" type="submit">
-                {" "}
-                Откликнуться{" "}
-              </Button>
+              <button className="btn btn-sm btn-primary" onClick={(e) => Respond(e)}>
+                Откликнуться
+              </button>
             </div>
           </div>
           <div style={{ flex: 2 }}>
