@@ -32,6 +32,15 @@ def imageGet(request):
         return Response({"detail" : "У пользователя нет аватарки"}, status=status.HTTP_404_NOT_FOUND)
     return Response(user_obj.image.url)
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def emailGet(request):
+    try:
+        user_obj = CustomUser.objects.get(id=request.user.id)
+    except Request.DoesNotExist:
+        return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    return Response(user_obj.email)
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
 def requestCreate(request):
