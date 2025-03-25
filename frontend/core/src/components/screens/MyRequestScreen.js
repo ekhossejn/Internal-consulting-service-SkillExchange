@@ -148,7 +148,7 @@ function MyRequestScreen({ params }) {
             </div>
           </div>
           <div style={{ flex: 2 }}>
-            <h2>{mainInfo.name}</h2>
+            <h1>{mainInfo.name}</h1>
             <h3 style={{ fontSize: "2vh" }}>
               {new Date(mainInfo.createdAt).toLocaleString("ru-RU", options)}
             </h3>

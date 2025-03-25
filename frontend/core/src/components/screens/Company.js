@@ -51,8 +51,8 @@ function Company() {
         }}
       >
         <h1>{mainInfo.name}</h1>
-        <h1>{mainInfo.domain}</h1>
-        <h1>{mainInfo.description}</h1>
+        <h3>{mainInfo.domain}</h3>
+        <h3>{mainInfo.description}</h3>
       </div>
     </Container>
   );
