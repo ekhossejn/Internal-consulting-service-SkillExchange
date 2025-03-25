@@ -12,7 +12,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.db.models import F, Case, When, Value, IntegerField
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def usersGet(request):
     filter_skills = request.data.get('filter_skills', None)
@@ -52,7 +52,7 @@ def userGet(request, _id):
     serializer = CustomUserSerializer(user, many=False)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def requestsGet(request):
     filter_skills = request.data.get('filter_skills', None)

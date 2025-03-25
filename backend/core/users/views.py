@@ -3,11 +3,30 @@ from rest_framework.decorators import api_view, permission_classes
 
 from authentication.models import CustomUser  
 from .models import Request, Skill, Company
-from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer
+from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer, UpdateCustomUserSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
 from .serializer import CustomUserSerializer
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def profileGet(request):
+    user = request.user
+    serializer = CustomUserSerializer(user, many=False)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def profileUpdate(request):
+    user = request.user
+    serializer = UpdateCustomUserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data)
+        return Response({"detail": "Профиль успешно обновлен."}, status=status.HTTP_200_OK)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -124,9 +143,3 @@ def requestsGet(request):
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def profileGet(request):
-    user = request.user
-    serializer = CustomUserSerializer(user, many=False)
-    return Response(serializer.data)

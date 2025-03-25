@@ -43,6 +43,26 @@ class CustomUserSerializer(serializers.ModelSerializer):
             return 0
         return obj.rating_sum // obj.rating_count
 
+class UpdateCustomUserSerializer(serializers.ModelSerializer):
+    skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True)
+    documents = serializers.SerializerMethodField()
+
+    class Meta:
+        model=CustomUser
+        fields=['image', 'name', 'skills', 'documents']
+    
+    def update(self, instance, validated_data):
+        validated_data.pop('email', None)
+        validated_data.pop('rating', None)
+        validated_data.pop('reviews', None)
+
+        super().update(instance, validated_data)
+        return instance
+    
+    def get_documents(self, obj):
+        documents = Document.objects.filter(owner=obj)
+        return DocumentsSerializer(documents, many=True).data
+    
 class RequestsSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     emails = serializers.SerializerMethodField()

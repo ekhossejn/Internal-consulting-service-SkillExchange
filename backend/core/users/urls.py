@@ -2,6 +2,10 @@ from users import views
 from django.urls import path
 
 urlpatterns = [
+    path('', views.profileGet),
+
+    path('update/', views.profileUpdate),
+
     path('company/get/', views.companyGet),
     path('image/get/', views.imageGet),
     path('email/get/', views.emailGet),
@@ -12,5 +16,4 @@ urlpatterns = [
     path('request/delete/<str:_id>/', views.requestDelete),
     path('request/<str:_id>/emails/get/', views.requestEmailsGet),
     path('requests/get/', views.requestsGet),
-    path('', views.profileGet),
 ]
