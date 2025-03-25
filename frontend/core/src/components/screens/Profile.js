@@ -94,7 +94,7 @@ function Profile() {
                 ></img>
               </div>
               <div>
-                <h2>{mainInfo.name}</h2>
+                <h1>{mainInfo.name}</h1>
                 <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating}</h2>
               </div>
             </div>

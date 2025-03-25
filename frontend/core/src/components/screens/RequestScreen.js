@@ -40,13 +40,24 @@ function RequestScreen({ params }) {
         },
       };
 
-      const { data } = await axios.post(
-        `/search/request/respond/${id}/`,
+      const {email} = await axios.post(
+        `/profile/email/get/`,
         {},
         config
       );
 
-      setRespondInfo(data);
+      if (email in mainInfo.emails) {
+        setError("Вы уже откликались на этот запрос")
+      } else {
+
+        const { data } = await axios.post(
+          `/search/request/respond/${id}/`,
+          {},
+          config
+        );
+
+        setRespondInfo(data);
+      }
     } catch (error) {
       setError(
         error.response && error.response.data.detail
@@ -133,7 +144,7 @@ function RequestScreen({ params }) {
             </div>
           </div>
           <div style={{ flex: 2 }}>
-            <h2>{mainInfo.name}</h2>
+            <h1>{mainInfo.name}</h1>
             <h3 style={{ fontSize: '2vh'}}>{new Date(mainInfo.createdAt).toLocaleString('ru-RU', options)
             }</h3>
             <Card
