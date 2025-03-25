@@ -11,6 +11,8 @@ function SearchUsers() {
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [users, setUsers] = useState([]);
+  const [shownUsers, setShownUsers] = useState([]);
+  const [sortOrder, setSortOrder] = useState("");
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -20,19 +22,24 @@ function SearchUsers() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`/search/users/get/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const { data } = await axios.post(
+          `/search/users/get/`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         setUsers(data);
+        setShownUsers(data);
       } catch (error) {
         setError(error.response?.data?.detail || error.message);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchRequests();
   }, []);
 
@@ -42,17 +49,51 @@ function SearchUsers() {
     }
   }, [error]);
 
+  useEffect(() => {
+    let sortedUsers = [...users];
+    if (sortOrder === "from_higher") {
+      sortedUsers.sort(
+        (a, b) =>
+          b.rating - a.rating
+      );
+    } else if (sortOrder === "from_lower") {
+      sortedUsers.sort(
+        (a, b) =>
+          a.rating - b.rating
+      );
+    }
+    setShownUsers(sortedUsers);
+  }, [sortOrder, users]);
+
   return (
     <Container>
       <br />
-      <h1>Люди</h1>
       {loading ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
         <Row>
-          {users.map((user) => (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h1>Люди</h1>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="form-select"
+              style={{ width: "30vw" }}
+            >
+              <option value="">-</option>
+              <option value="from_higher">Сначала высокий рейтинг</option>
+              <option value="from_lower">Сначала низкий рейтинг</option>
+            </select>
+          </div>
+          {shownUsers.map((user) => (
             <Col key={user.id} sm={12} md={6} lg={4} xl={3}>
               <User user={user} />
             </Col>
@@ -63,4 +104,4 @@ function SearchUsers() {
   );
 }
 
-export default SearchUsers
+export default SearchUsers;
