@@ -6,6 +6,17 @@ import Loader from "../Loader";
 import Message from "../Message";
 import Skill from "../Skill";
 
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+  hour: 'numeric',
+  minute: 'numeric',
+  second: 'numeric',
+  timeZoneName: 'short'
+};
+
+
 function MyRequestScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -94,7 +105,8 @@ function MyRequestScreen({ params }) {
           </div>
           <div style={{ flex: 2 }}>
             <h2>{mainInfo.name}</h2>
-            <h3>{mainInfo.createdAt}</h3>
+            <h3 style={{ fontSize: '2vh'}}>{new Date(mainInfo.createdAt).toLocaleString('ru-RU', options)
+            }</h3>
             <Card
               className="my-3 p-3 rounded"
               style={{ backgroundColor: "var(--bs-light)", minHeight: "8vh" }}
