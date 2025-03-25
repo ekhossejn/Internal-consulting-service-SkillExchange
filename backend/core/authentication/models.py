@@ -26,7 +26,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg')
+    image = models.ImageField(default='default.jpg', upload_to='avatars')
     name = models.CharField(max_length=20, null=True)
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
