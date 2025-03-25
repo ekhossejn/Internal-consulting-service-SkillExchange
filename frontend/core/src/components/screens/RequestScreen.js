@@ -40,13 +40,12 @@ function RequestScreen({ params }) {
         },
       };
 
-      const {email} = await axios.post(
+      const {data: email} = await axios.get(
         `/profile/email/get/`,
-        {},
         config
       );
 
-      if (email in mainInfo.emails) {
+      if (mainInfo.emails.includes(email)) {
         setError("Вы уже откликались на этот запрос")
       } else {
 
@@ -93,7 +92,7 @@ function RequestScreen({ params }) {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && error != "Вы уже откликались на этот запрос") {
       navigate("/login");
     }
   }, [error]);
