@@ -127,7 +127,7 @@ function RequestScreen({ params }) {
             </div>
             <br />
             <div className="d-grid gap-2">
-              <button className="btn btn-sm btn-primary" onClick={(e) => Respond(e)}>
+              <button className="btn btn-md btn-primary" onClick={(e) => Respond(e)}>
                 Откликнуться
               </button>
             </div>

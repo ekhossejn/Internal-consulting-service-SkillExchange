@@ -36,6 +36,7 @@ function MyRequests() {
       );
 
       setDeleteInfo(data);
+      window.location.reload();
     } catch (error) {
       setError(
         error.response && error.response.data.detail
