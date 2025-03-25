@@ -7,15 +7,14 @@ import Message from "../Message";
 import Skill from "../Skill";
 
 const options = {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
-  timeZoneName: 'short'
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  timeZoneName: "short",
 };
-
 
 function MyRequestScreen({ params }) {
   const { id } = useParams();
@@ -26,6 +25,7 @@ function MyRequestScreen({ params }) {
   const [loading, setLoading] = useState();
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
+    emails: [],
   });
 
   useEffect(() => {
@@ -102,16 +102,23 @@ function MyRequestScreen({ params }) {
                 Вернуть отклики{" "}
               </Button>
             </div>
+            <br />
+            <div style={{textAlign: 'center'}}>
+              {mainInfo.emails.map((email) => (
+                <h3>{email}</h3>
+              ))}
+            </div>
           </div>
           <div style={{ flex: 2 }}>
             <h2>{mainInfo.name}</h2>
-            <h3 style={{ fontSize: '2vh'}}>{new Date(mainInfo.createdAt).toLocaleString('ru-RU', options)
-            }</h3>
+            <h3 style={{ fontSize: "2vh" }}>
+              {new Date(mainInfo.createdAt).toLocaleString("ru-RU", options)}
+            </h3>
             <Card
               className="my-3 p-3 rounded"
               style={{ backgroundColor: "var(--bs-light)", minHeight: "8vh" }}
             >
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10vh" }}>
                 {mainInfo.requiredSkills.map((skill) => (
                   <Skill key={skill.id} skill={skill} />
                 ))}
