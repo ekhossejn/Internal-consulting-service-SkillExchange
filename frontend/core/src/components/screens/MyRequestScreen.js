@@ -16,6 +16,13 @@ const options = {
   timeZoneName: "short",
 };
 
+function GetButtonName(isActive) {
+  if (isActive) {
+    return "Скрыть запрос"
+  }
+  return "Показать запрос"
+}
+
 function MyRequestScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,6 +34,37 @@ function MyRequestScreen({ params }) {
     requiredSkills: [],
     emails: [],
   });
+  const [requestStateInfo, setRequestStateInfo] = useState();
+
+  const ChangeRequestState = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/profile/request/${id}/active/change/`,
+        {},
+        config
+      );
+
+      setRequestStateInfo(data);
+      window.location.reload();
+    } catch (error) {
+      setError(
+        error.response && error.response.data.detail
+          ? error.response.data.detail
+          : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -97,12 +135,12 @@ function MyRequestScreen({ params }) {
             </div>
             <br />
             <div className="d-grid gap-2">
-              <Button className="btn btn-md btn-success" type="submit">
-                {" "}
-                Вернуть отклики{" "}
-              </Button>
+              <button className="btn btn-md btn-primary"  onClick={(e) => ChangeRequestState(e)}>
+                {GetButtonName(mainInfo.isActive)}
+              </button>
             </div>
             <br />
+            <h3 style={{ fontSize: "3vh" }}>Почты откликнувшихся:</h3>
             <div style={{textAlign: 'center'}}>
               {mainInfo.emails.map((email) => (
                 <h3>{email}</h3>
