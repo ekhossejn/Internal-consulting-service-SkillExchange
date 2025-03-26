@@ -70,13 +70,13 @@ function UserScreen({ params }) {
             <div
               style={{
                 display: "flex",
-                gap: "100px",
+                gap: "3vw",
               }}
             >
               <div
                 style={{
-                  width: "300px",
-                  height: "300px",
+                  width: "min(30vh, 30vw)",
+                  height: "min(30vh, 30vw)",
                   borderRadius: "50%",
                   overflow: "hidden",
                   border: "3px solid var(--secondary-color)",
@@ -97,7 +97,7 @@ function UserScreen({ params }) {
               </div>
               <div>
                 <h1>{mainInfo.name}</h1>
-                <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating}</h2>
+                <h2 style={{ marginLeft: "10vw" }}>{mainInfo.rating}</h2>
                 <div className="d-grid gap-2">
                   {emailVisible ? (
                     <p className="text-success">{mainInfo.email}</p>
