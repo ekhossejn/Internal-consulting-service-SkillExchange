@@ -28,15 +28,16 @@ def usersGet(request):
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
     if filter_rating: 
-        if isinstance(filter_rating, float):
+        try:
+            filter_rating = float(filter_rating)
             users = users.annotate(
                 average_rating=Case(
                 When(rating_count=0, then=Value(0.0)),
                 default=Cast(F('rating_sum'), FloatField()) / F('rating_count'),
                 output_field=FloatField())
             ).filter(average_rating__gte=filter_rating).distinct()
-        else:
-            return Response({"error": "filter_rating must be a float."}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = CustomUserSerializer(users, many=True)
     return Response(serializer.data)
@@ -68,15 +69,16 @@ def requestsGet(request):
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
     if filter_rating: 
-        if isinstance(filter_rating, float):
+        try:
+            filter_rating = float(filter_rating)
             requests = requests.annotate(
                 average_rating=Case(
                 When(author__rating_count=0, then=Value(0.0)),
                 default=Cast(F('author__rating_sum'), FloatField()) / F('author__rating_count'),
                 output_field=FloatField())
             ).filter(average_rating__gte=filter_rating).distinct()
-        else:
-            return Response({"error": "filter_rating must be a float."}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)

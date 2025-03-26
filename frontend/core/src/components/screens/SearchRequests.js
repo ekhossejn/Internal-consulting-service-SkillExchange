@@ -84,18 +84,23 @@ function SearchRequests() {
           >
             <h1>Запросы</h1>
             <div style={{ display: "flex", gap: "1vw" }}>
-              <input
+                <input
                 className="form-control"
                 type="text"
                 inputMode="decimal"
                 value={inputRating ?? ""}
                 onChange={(e) => {
                   let value = e.target.value;
-                  if (
-                    value === "" ||
-                    (value.match(/^\d+(\.\d{0,2})?$/) && parseFloat(value) <= 5)
-                  ) {
-                    setInputRating(value);
+
+                  if (value === "") {
+                    setInputRating("");
+                    return;
+                  }
+                  if (value.match(/^\d*[.,]?\d{0,2}$/)) {
+                    const numericValue = parseFloat(value);
+                    if (numericValue >= 0 && numericValue <= 5) {
+                      setInputRating(value);
+                    }
                   }
                 }}
                 onBlur={() => {
@@ -110,6 +115,14 @@ function SearchRequests() {
                 onKeyDown={(e) => {
                   if (e.key === "ArrowUp" || e.key === "ArrowDown") {
                     e.preventDefault();
+                  }
+
+                  if (e.key === "Enter") {
+                    if (inputRating === "" || inputRating === undefined) {
+                      setRatingFilter(0);
+                    } else {
+                      setRatingFilter(parseFloat(inputRating));
+                    }
                   }
                 }}
               />
