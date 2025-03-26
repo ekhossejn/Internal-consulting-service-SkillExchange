@@ -28,6 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='avatars')
     name = models.CharField(max_length=20, null=True)
+    rating = models.FloatField(default=0)
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
     skills = models.ManyToManyField('users.Skill', related_name='users', blank=True)

@@ -16,7 +16,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     skills = SkillsSerializer(many=True)
     documents = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
-    rating =  serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
 
     class Meta:
         model=CustomUser
@@ -37,11 +37,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def get_reviews(self, obj):
         reviews = Review.objects.filter(reviewee=obj)
         return ReviewsSerializer(reviews, many=True).data
-
+    
     def get_rating(self, obj):
-        if obj.rating_count == 0:
-            return 0
-        return obj.rating_sum // obj.rating_count
+        return round(obj.rating, 2)
+
+class UpdateRatingCustomUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=CustomUser
+        fields=['id', 'rating', 'rating_sum', 'rating_count']
 
 class UpdateCustomUserSerializer(serializers.ModelSerializer):
     skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True)
@@ -91,7 +94,7 @@ class RequestsShortInfoSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
     class Meta:
         model=Request
-        fields=['id', 'image', 'name', 'text', 'isActive']
+        fields=['id', 'image', 'name', 'text', 'createdAt', 'isActive']
     
     def get_image(self, obj):
         user = CustomUser.objects.get(id = obj.author.id)
