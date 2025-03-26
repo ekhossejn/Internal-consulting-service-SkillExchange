@@ -15,16 +15,20 @@ def profileGet(request):
     serializer = CustomUserSerializer(user, many=False)
     return Response(serializer.data)
 
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def profileUpdate(request):
     user = request.user
+    if request.FILES.get('image'):
+        request.data['image'] = request.FILES.get('image')
+    else:
+        request.data['image'] = user.image
     serializer = UpdateCustomUserSerializer(user, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
         serializer = CustomUserSerializer(user)
-        return Response(serializer.data)
-        return Response({"detail": "Профиль успешно обновлен."}, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
