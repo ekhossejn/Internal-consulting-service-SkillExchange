@@ -68,13 +68,13 @@ function Profile() {
             <div
               style={{
                 display: "flex",
-                gap: "10px",
+                gap: "3vw",
               }}
             >
               <div
                 style={{
-                  width: "300px",
-                  height: "300px",
+                  width: "min(30vh, 30vw)",
+                  height: "min(30vh, 30vw)",
                   borderRadius: "50%",
                   overflow: "hidden",
                   border: "3px solid var(--secondary-color)",
@@ -95,7 +95,7 @@ function Profile() {
               </div>
               <div>
                 <h1>{mainInfo.name}</h1>
-                <h2 style={{ marginLeft: "100px" }}>{mainInfo.rating}</h2>
+                <h2 style={{ marginLeft: "10vw" }}>{mainInfo.rating}</h2>
               </div>
             </div>
             <Card
