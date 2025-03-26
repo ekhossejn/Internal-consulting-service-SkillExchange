@@ -51,12 +51,12 @@ function SearchRequests() {
 
   useEffect(() => {
     let sortedRequests = [...requests];
-    if (sortOrder === "from_higher") {
+    if (sortOrder === "newer") {
       sortedRequests.sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
-    } else if (sortOrder === "from_lower") {
+    } else if (sortOrder === "older") {
       sortedRequests.sort(
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -67,7 +67,6 @@ function SearchRequests() {
 
   return (
     <Container>
-      <br />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -79,6 +78,7 @@ function SearchRequests() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              marginTop: "2vh"
             }}
           >
             <h1>Запросы</h1>
@@ -89,8 +89,10 @@ function SearchRequests() {
               style={{ width: "30vw" }}
             >
               <option value="">-</option>
-              <option value="from_higher">Сначала новые</option>
-              <option value="from_lower">Сначала старые</option>
+              <option value="newer">Сначала новые</option>
+              <option value="older">Сначала старые</option>
+              <option value="higher">Сначала высокий рейтинг автора</option>
+              <option value="lower">Сначала низкий рейтинг автора </option>
             </select>
           </div>
 

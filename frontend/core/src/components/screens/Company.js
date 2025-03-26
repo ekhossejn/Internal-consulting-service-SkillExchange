@@ -41,19 +41,25 @@ function Company() {
 
   return (
     <Container>
-      <br />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <h1>{mainInfo.name}</h1>
-        <h3>{mainInfo.domain}</h3>
-        <h3>{mainInfo.description}</h3>
-      </div>
+      {loading ? (
+        <Loader />
+      ) : error ? (
+        <Message variant="danger">{error}</Message>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "30vh"
+          }}
+        >
+          <h1>{mainInfo.name}</h1>
+          <h3>{mainInfo.domain}</h3>
+          <h3>{mainInfo.description}</h3>
+        </div>
+      )}
     </Container>
   );
 }

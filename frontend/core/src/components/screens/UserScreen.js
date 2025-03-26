@@ -51,7 +51,6 @@ function UserScreen({ params }) {
 
   return (
     <Container>
-      <br />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -60,6 +59,7 @@ function UserScreen({ params }) {
         <div
           style={{
             display: "flex",
+            marginTop: "2vh"
           }}
         >
           <div

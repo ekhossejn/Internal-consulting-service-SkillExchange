@@ -99,7 +99,6 @@ function RequestScreen({ params }) {
 
   return (
     <Container>
-      <br />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -109,6 +108,7 @@ function RequestScreen({ params }) {
           style={{
             display: "flex",
             gap: "100px",
+            marginTop: "2vh"
           }}
         >
           <div>
