@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from users.models import Request, Review, Skill
-from users.serializer import RequestsShortInfoSerializer,RequestsSerializer, ReviewsSerializer, SkillsSerializer
+from users.serializer import RequestsShortInfoSerializer,RequestsSerializer, ReviewsSerializer, SkillsSerializer, UpdateRatingCustomUserSerializer
 from authentication.models import CustomUser
 from users.serializer import CustomUserSerializer
 from rest_framework.decorators import api_view, permission_classes
@@ -10,13 +10,14 @@ from rest_framework import status
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.db.models import F, Case, When, Value, IntegerField
+from django.db.models import F, Case, When, Value, FloatField
+from django.db.models.functions import Cast
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def usersGet(request):
     filter_skills = request.data.get('filter_skills', None)
-    filter_ratings = request.data.get('filter_ratings', None)
+    filter_rating = request.data.get('filter_rating', None)
 
     users = CustomUser.objects.all().exclude(id = request.user.id)
 
@@ -26,16 +27,16 @@ def usersGet(request):
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
-    if filter_ratings: 
-        if isinstance(filter_ratings, list):
+    if filter_rating: 
+        if isinstance(filter_rating, float):
             users = users.annotate(
                 average_rating=Case(
                 When(rating_count=0, then=Value(0.0)),
-                default=F('rating_sum') / F('rating_count'),
-                output_field=IntegerField())
-            ).filter(average_rating__in=filter_ratings).distinct()
+                default=Cast(F('rating_sum'), FloatField()) / F('rating_count'),
+                output_field=FloatField())
+            ).filter(average_rating__gte=filter_rating).distinct()
         else:
-            return Response({"error": "filter_ratings must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "filter_rating must be a float."}, status=status.HTTP_400_BAD_REQUEST)
 
     serializer = CustomUserSerializer(users, many=True)
     return Response(serializer.data)
@@ -56,7 +57,7 @@ def userGet(request, _id):
 @permission_classes([IsAuthenticated])
 def requestsGet(request):
     filter_skills = request.data.get('filter_skills', None)
-    filter_ratings = request.data.get('filter_ratings', None)
+    filter_rating = request.data.get('filter_rating', None)
 
     requests = Request.objects.filter(isActive = True).exclude(author = request.user)
 
@@ -66,16 +67,16 @@ def requestsGet(request):
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
-    if filter_ratings: 
-        if isinstance(filter_ratings, list):
+    if filter_rating: 
+        if isinstance(filter_rating, float):
             requests = requests.annotate(
                 average_rating=Case(
                 When(author__rating_count=0, then=Value(0.0)),
-                default=F('author__rating_sum') / F('author__rating_count'),
-                output_field=IntegerField())
-            ).filter(average_rating__in=filter_ratings).distinct()
+                default=Cast(F('author__rating_sum'), FloatField()) / F('author__rating_count'),
+                output_field=FloatField())
+            ).filter(average_rating__gte=filter_rating).distinct()
         else:
-            return Response({"error": "filter_ratings must be a list."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "filter_rating must be a float."}, status=status.HTTP_400_BAD_REQUEST)
     
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
@@ -146,11 +147,14 @@ def reviewCreate(request, _id):
 
         _rating_sum = reviewee_obj.rating_sum + int(review_info['rating'])
         _rating_count = reviewee_obj.rating_count + 1
+        _rating = _rating_sum / _rating_count
 
-        reviewee_serializer = CustomUserSerializer(reviewee_obj, data = { 'rating_sum':_rating_sum, 'rating_count':_rating_count}, partial=True)
-        reviewee_serializer.is_valid()
-        reviewee_serializer.save()
-        return Response(review_serializer.data, status=status.HTTP_201_CREATED)
+        reviewee_serializer = UpdateRatingCustomUserSerializer(reviewee_obj, data = { 'rating': _rating, 'rating_sum':_rating_sum, 'rating_count':_rating_count}, partial=True)
+        if reviewee_serializer.is_valid():
+            reviewee_serializer.save()
+            return Response(review_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(reviewee_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
