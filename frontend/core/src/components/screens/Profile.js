@@ -49,7 +49,6 @@ function Profile() {
 
   return (
     <Container>
-      <br />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -58,6 +57,7 @@ function Profile() {
         <div
           style={{
             display: "flex",
+            marginTop: "2vh"
           }}
         >
           <div

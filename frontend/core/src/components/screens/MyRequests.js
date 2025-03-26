@@ -76,14 +76,13 @@ function MyRequests() {
 
   return (
     <Container>
-      <br />
-      <h1>Мои запросы</h1>
       {loading ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <div className="d-grid gap-2">
+        <div className="d-grid gap-2" style= {{marginTop: "2vh"}}>
+          <h1>Мои запросы</h1>
           <button
             class="btn btn-lg btn-primary"
             onClick={() => navigate("/profile/requests/create")}

@@ -67,7 +67,6 @@ function SearchUsers() {
 
   return (
     <Container>
-      <br />
       {loading ? (
         <Loader />
       ) : error ? (
@@ -79,6 +78,7 @@ function SearchUsers() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
+              marginTop: "2vh"
             }}
           >
             <h1>Люди</h1>
