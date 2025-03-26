@@ -20,6 +20,7 @@ import MakeRequest from "./components/screens/MakeRequest";
 import MyRequestScreen from "./components/screens/MyRequestScreen";
 import UserScreen from "./components/screens/UserScreen";
 import MakeReview from "./components/screens/MakeReview";
+import Settings from "./components/screens/Settings";
 
 function Layout() {
   const location = useLocation();
@@ -65,6 +66,11 @@ function Layout() {
           exact
           path="/search/users/:id/comment"
           element={<MakeReview />}
+        ></Route>
+        <Route
+          exact
+          path="profile/settings"
+          element={<Settings />}
         ></Route>
       </Routes>
     </>
