@@ -2,8 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 
 from authentication.models import CustomUser  
-from .models import Request, Skill, Company
-from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer, UpdateCustomUserSerializer
+from .models import Request, Skill, Document
+from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer, UpdateCustomUserSerializer, DocumentsSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 
@@ -31,6 +31,35 @@ def profileUpdate(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def documentUpload(request):
+    image = request.FILES.get('image')
+    if not image:
+        return Response({"detail": "Файл не был загружен!"}, status=status.HTTP_400_BAD_REQUEST)
+    document = Document.objects.create(owner=request.user, image=image)
+    return Response(
+        {
+            "id": document.id,
+            "owner": document.owner.id,
+            "image": document.image.url,
+            "detail": "Документ успешно загружен"
+        },
+        status=status.HTTP_201_CREATED
+    )
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def documentDelete(request, _id):
+    try:
+        document_obj = Document.objects.get(id = _id)
+    except Document.DoesNotExist:
+        return Response({"detail": "Документ с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if request.user.id != document_obj.owner.id:
+        return Response({"detail": "У вас нет доступа для удаления этого запроса"}, status=status.HTTP_403_FORBIDDEN)
+    document_obj.delete()
+    return Response({"detail": "Запрос успешно удален"})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

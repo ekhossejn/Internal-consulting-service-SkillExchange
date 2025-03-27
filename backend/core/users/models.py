@@ -3,7 +3,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Document(models.Model):
     owner = models.ForeignKey('authentication.CustomUser', on_delete=models.CASCADE)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(upload_to='documents')
     def __str__(self):
         return (str)(self.owner)
 
