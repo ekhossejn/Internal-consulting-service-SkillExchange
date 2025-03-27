@@ -30,12 +30,7 @@ def usersGet(request):
     if filter_rating: 
         try:
             filter_rating = float(filter_rating)
-            users = users.annotate(
-                average_rating=Case(
-                When(rating_count=0, then=Value(0.0)),
-                default=Cast(F('rating_sum'), FloatField()) / F('rating_count'),
-                output_field=FloatField())
-            ).filter(average_rating__gte=filter_rating).distinct()
+            users = users.filter(rating__gte=filter_rating).distinct()
         except:
             return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -59,27 +54,18 @@ def userGet(request, _id):
 def requestsGet(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
-
     requests = Request.objects.filter(isActive = True).exclude(author = request.user)
-
     if filter_skills: 
         if isinstance(filter_skills, list):
             requests = requests.filter(requiredSkills__id__in=filter_skills).distinct()
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
-        
     if filter_rating: 
         try:
             filter_rating = float(filter_rating)
-            requests = requests.annotate(
-                average_rating=Case(
-                When(author__rating_count=0, then=Value(0.0)),
-                default=Cast(F('author__rating_sum'), FloatField()) / F('author__rating_count'),
-                output_field=FloatField())
-            ).filter(average_rating__gte=filter_rating).distinct()
+            requests = requests.filter(author__rating__gte=filter_rating).distinct()
         except:
             return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
-    
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
 
