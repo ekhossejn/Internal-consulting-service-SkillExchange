@@ -6,18 +6,16 @@ import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
 import Skill from "../Skill";
-import Document from "../Document";
 
 function Settings() {
     const navigate = useNavigate();
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
     const accessToken = userInfo?.access;
-    const [image, setImage] = useState(null);
     const [error, setError] = useState();
     const [loading, setLoading] = useState();
-    const [skillsModalOpen, setSkillsModalOpen] = useState(false); // Состояние модального окна для редактирования навыков
-    const [availableSkills, setAvailableSkills] = useState([]); // Доступные навыки, загружаемые с сервера
-    const [selectedSkills, setSelectedSkills] = useState([]); // Локальное состояние для выбранных навыков
+    const [skillsModalOpen, setSkillsModalOpen] = useState(false);
+    const [availableSkills, setAvailableSkills] = useState([]);
+    const [selectedSkills, setSelectedSkills] = useState([]);
     const [mainInfo, setMainInfo] = useState({
         image: "",
         name: "",
@@ -25,12 +23,15 @@ function Settings() {
         skills: [],
         documents: [],
     });
-
     const [name, setName] = useState("");
     const [isUpdatingName, setIsUpdatingName] = useState(false);
 
+    const [selectedDocument, setSelectedDocument] = useState(null); // Для модального окна документа
+    const [docModalOpen, setDocModalOpen] = useState(false); // Состояние открытия модального окна
+    const [selectedFile, setSelectedFile] = useState(null);
+
     useEffect(() => {
-        const fetchRequests = async () => {
+        const fetchProfile = async () => {
             setLoading(true);
             try {
                 const { data: mainData } = await axios.get(`/profile/`, {
@@ -40,7 +41,6 @@ function Settings() {
                 });
                 setMainInfo(mainData);
                 setName(mainData.name);
-                setSelectedSkills(mainData.skills.map(skill => skill.id)); // Устанавливаем текущие навыки
             } catch (error) {
                 setError(error.response?.data?.detail || error.message);
             } finally {
@@ -48,7 +48,7 @@ function Settings() {
             }
         };
 
-        fetchRequests();
+        fetchProfile();
     }, []);
 
     useEffect(() => {
@@ -178,6 +178,85 @@ function Settings() {
         }
     };
 
+    const handleDocumentOpen = (doc) => {
+        setSelectedDocument(doc);
+        setDocModalOpen(true);
+    };
+
+    const handleDocumentDelete = async () => {
+        try {
+            setLoading(true);
+            await axios.post(`profile/document/${selectedDocument.id}/delete/`, {}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            setMainInfo((prevState) => ({
+                ...prevState,
+                documents: prevState.documents.filter(
+                    (doc) => doc.id !== selectedDocument.id
+                ),
+            }));
+            setSelectedDocument(null);
+            setDocModalOpen(false);
+        } catch (error) {
+            console.error(
+                "Error deleting document:",
+                error.response?.data || error.message
+            );
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFileSelect = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setSelectedFile(file);
+        }
+    };
+
+    const handleFileUpload = async () => {
+        if (!selectedFile) {
+            alert('Выберите файл для загрузки!');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+
+        try {
+            setLoading(true);
+            const response = await axios.put(
+                "/profile/document/upload/",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
+
+            const uploadedDocument = response.data;
+
+            console.log("Uploaded document:", uploadedDocument);
+            setMainInfo((prevMainInfo) => ({
+                ...prevMainInfo,
+                documents: [...prevMainInfo.documents, uploadedDocument],
+            }));
+
+            setSelectedFile(null); // Сброс выбранного файла
+
+        } catch (error) {
+            console.error(
+                "Error uploading image:",
+                error.response?.data || error.message
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <Container>
             <br />
@@ -189,7 +268,6 @@ function Settings() {
                 <div style={{ display: "flex" }}>
                     <div style={{ flex: 2 }}>
                         <div style={{ display: "flex", gap: "3vw" }}>
-                            {/* Блок с фотографией */}
                             <div
                                 style={{
                                     width: "min(30vh, 30vw)",
@@ -264,7 +342,7 @@ function Settings() {
                             className="my-3 p-3 rounded"
                             style={{
                                 backgroundColor: "var(--bs-light)",
-                                width: "90%",
+                                width: "70%",
                                 minHeight: "8vh",
                             }}
                         >
@@ -287,36 +365,98 @@ function Settings() {
                         >
                             Редактировать навыки
                         </Button>
-                        {mainInfo.documents.map((document) => (
-                            <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
-                                <Document document={document} />
-                            </Col>
-                        ))}
+                        <Modal show={skillsModalOpen} onHide={closeSkillsModal}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Редактировать навыки</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                {availableSkills.map((skill) => (
+                                    <Form.Check
+                                        key={skill.id}
+                                        type="checkbox"
+                                        label={skill.name}
+                                        checked={selectedSkills.includes(skill.id)}
+                                        onChange={() => toggleSkillSelection(skill.id)}
+                                    />
+                                ))}
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button variant="secondary" onClick={closeSkillsModal}>
+                                    Закрыть
+                                </Button>
+                                <Button variant="primary" onClick={handleSkillsSave}>
+                                    Сохранить изменения
+                                </Button>
+                            </Modal.Footer>
+                        </Modal>
+                        <Row>
+                            {mainInfo.documents.map((document) => (
+                                <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
+                                    <Card
+                                        className="p-3 my-2"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => handleDocumentOpen(document)}
+                                    >
+                                        <Card.Img
+                                            variant="top"
+                                            src={document.image}
+                                            style={{
+                                                height: "200px",
+                                                objectFit: "cover",
+                                                borderRadius: "0px",
+                                            }}
+                                        />
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+
+                        <Row className="mt-4">
+                        <Col>
+                            <Form.Group>
+                                <Form.Control type="file" onChange={handleFileSelect} />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Button
+                                variant="primary"
+                                onClick={handleFileUpload}
+                                disabled={!selectedFile}
+                            >
+                                Загрузить документ
+                            </Button>
+                        </Col>
+                    </Row>
                     </div>
                 </div>
             )}
-            {/* Модальное окно для редактирования навыков */}
-            <Modal show={skillsModalOpen} onHide={closeSkillsModal}>
+
+            <Modal show={docModalOpen} onHide={() => setDocModalOpen(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Редактировать навыки</Modal.Title>
+                    <Modal.Title>Действия с документом</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {availableSkills.map((skill) => (
-                        <Form.Check
-                            key={skill.id}
-                            type="checkbox"
-                            label={skill.name}
-                            checked={selectedSkills.includes(skill.id)}
-                            onChange={() => toggleSkillSelection(skill.id)}
-                        />
-                    ))}
+                    <p>Вы хотите удалить или открыть документ?</p>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={closeSkillsModal}>
-                        Закрыть
+                    <Button
+                        variant="danger"
+                        onClick={() => handleDocumentDelete()}
+                    >
+                        Удалить
                     </Button>
-                    <Button variant="primary" onClick={handleSkillsSave}>
-                        Сохранить изменения
+                    <Button
+                    variant="primary"
+                    onClick={() => {
+                        const newTab = window.open();
+                        if (newTab) {
+                            newTab.location = selectedDocument.image;
+                        } else {
+                            console.error("Браузер заблокировал попытку открытия новой вкладки.");
+                        }
+                    }}
+                    >
+                    Открыть в новой вкладке
                     </Button>
                 </Modal.Footer>
             </Modal>

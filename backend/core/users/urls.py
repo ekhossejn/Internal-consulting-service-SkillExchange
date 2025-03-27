@@ -4,6 +4,8 @@ from django.urls import path
 urlpatterns = [
     path('', views.profileGet),
 
+    path('document/<str:_id>/delete/', views.documentDelete),
+    path('document/upload/', views.documentUpload),
     path('update/', views.profileUpdate),
 
     path('company/get/', views.companyGet),
