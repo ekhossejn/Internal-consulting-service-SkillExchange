@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'authentication',
     'users',
     'search',
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware"
 ]
 
 REST_FRAMEWORK = {
@@ -186,3 +188,8 @@ MEDIA_ROOT = 'static/images'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_ALL_ORIGIN = True
+
+
+INTERNAL_IPS = [
+    '127.0.0.1'
+]

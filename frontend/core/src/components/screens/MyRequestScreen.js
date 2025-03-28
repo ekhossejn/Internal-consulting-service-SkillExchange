@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useLocation, useParams } from "react-router-dom";
-import { Row, Col, Card, Container, Button } from "react-bootstrap";
+import { useNavigate, useParams } from "react-router-dom";
+import { Card, Container } from "react-bootstrap";
 import axios from "axios";
 import Loader from "../Loader";
 import Message from "../Message";
@@ -18,23 +18,28 @@ const options = {
 
 function GetButtonName(isActive) {
   if (isActive) {
-    return "Скрыть запрос"
+    return "Скрыть запрос";
   }
-  return "Показать запрос"
+  return "Показать запрос";
 }
 
-function MyRequestScreen({ params }) {
+function MyRequestScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
-  const [error, setError] = useState();
-  const [loading, setLoading] = useState();
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
     emails: [],
+    image: "",
+    name: "",
+    text: "",
+    createdAt: "",
+    isActive: false,
   });
-  const [requestStateInfo, setRequestStateInfo] = useState();
+  const [requestStateInfo, setRequestStateInfo] = useState(null);
 
   const ChangeRequestState = async (e) => {
     e.preventDefault();
@@ -53,8 +58,11 @@ function MyRequestScreen({ params }) {
         config
       );
 
+      setMainInfo((prevState) => ({
+        ...prevState,
+        isActive: data.isActive,
+      }));
       setRequestStateInfo(data);
-      window.location.reload();
     } catch (error) {
       setError(
         error.response && error.response.data.detail
@@ -70,13 +78,14 @@ function MyRequestScreen({ params }) {
     const fetchRequests = async () => {
       setLoading(true);
       try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
         const { data: mainData } = await axios.get(
           `/profile/request/get/${id}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
+          config
         );
         setMainInfo(mainData);
       } catch (error) {
@@ -87,13 +96,13 @@ function MyRequestScreen({ params }) {
     };
 
     fetchRequests();
-  }, []);
+  }, [id, accessToken]);
 
   useEffect(() => {
     if (error) {
       navigate("/login");
     }
-  }, [error]);
+  }, [error, navigate]);
 
   return (
     <Container>
@@ -106,7 +115,7 @@ function MyRequestScreen({ params }) {
           style={{
             display: "flex",
             gap: "100px",
-            marginTop: "2vh"
+            marginTop: "2vh",
           }}
         >
           <div>
@@ -131,19 +140,22 @@ function MyRequestScreen({ params }) {
                   height: "100%",
                   objectFit: "cover",
                 }}
-              ></img>
+              />
             </div>
             <br />
             <div className="d-grid gap-2">
-              <button className="btn btn-md btn-primary"  onClick={(e) => ChangeRequestState(e)}>
+              <button
+                className="btn btn-md btn-primary"
+                onClick={(e) => ChangeRequestState(e)}
+              >
                 {GetButtonName(mainInfo.isActive)}
               </button>
             </div>
             <br />
             <h3 style={{ fontSize: "3vh" }}>Почты откликнувшихся:</h3>
-            <div style={{textAlign: 'center'}}>
-              {mainInfo.emails.map((email) => (
-                <h3>{email}</h3>
+            <div style={{ textAlign: "center" }}>
+              {mainInfo.emails.map((email, index) => (
+                <h3 key={index}>{email}</h3>
               ))}
             </div>
           </div>

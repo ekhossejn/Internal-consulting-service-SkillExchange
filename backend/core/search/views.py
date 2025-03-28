@@ -2,68 +2,64 @@ from django.shortcuts import render
 from users.models import Request, Review, Skill
 from users.serializer import RequestsShortInfoSerializer,RequestsSerializer, ReviewsSerializer, SkillsSerializer, UpdateRatingCustomUserSerializer
 from authentication.models import CustomUser
-from users.serializer import CustomUserSerializer
+from users.serializer import CustomUserSerializer, CustomUserShortInfoSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from django.core.mail import EmailMessage
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.db.models import F, Case, When, Value, FloatField
-from django.db.models.functions import Cast
+from .utils import send_email
+import asyncio
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def usersGet(request):
+def users_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
 
-    users = CustomUser.objects.all().exclude(id = request.user.id)
+    users = CustomUser.objects.exclude(id=request.user.id)
 
-    if filter_skills: 
+    if filter_skills != None: 
         if isinstance(filter_skills, list):
-            users = users.filter(skills__id__in=filter_skills).distinct()
+            users = users.filter(skills__id__in=filter_skills)
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
-    if filter_rating: 
+    if filter_rating != None and filter_rating > 0: 
         try:
             filter_rating = float(filter_rating)
-            users = users.filter(rating__gte=filter_rating).distinct()
+            users = users.filter(rating__gte=filter_rating)
         except:
             return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = CustomUserSerializer(users, many=True)
+    serializer = CustomUserShortInfoSerializer(users, many=True)
     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def userGet(request, _id):
+def user_get(request, _id):
     try: 
-        user = CustomUser.objects.get(id = _id) 
+        user_obj = CustomUser.objects.get(id=_id) 
     except CustomUser.DoesNotExist:
         return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
-    if request.user.id == user.id:
-        return Response({"detail": "Пользователь с таким id не доступен так как он не может просматривать сам себя."}, status=status.HTTP_404_NOT_FOUND)
-    serializer = CustomUserSerializer(user, many=False)
+    if request.user.id == user_obj.id:
+        return Response({"detail": "Пользователь с таким id не доступен, так как он не может просматривать сам себя."}, status=status.HTTP_403_FORBIDDEN)
+    serializer = CustomUserSerializer(user_obj)
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def requestsGet(request):
+def requests_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
-    requests = Request.objects.filter(isActive = True).exclude(author = request.user)
-    if filter_skills: 
+
+    requests = Request.objects.filter(isActive=True).exclude(author=request.user).select_related('author')
+    if filter_skills != None: 
         if isinstance(filter_skills, list):
-            requests = requests.filter(requiredSkills__id__in=filter_skills).distinct()
+            requests = requests.filter(requiredSkills__id__in=filter_skills)
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
-    if filter_rating: 
+    if filter_rating != None and filter_rating > 0: 
         try:
             filter_rating = float(filter_rating)
-            requests = requests.filter(author__rating__gte=filter_rating).distinct()
+            requests = requests.select_related('author').filter(author__rating__gte=filter_rating)
         except:
             return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
     serializer = RequestsShortInfoSerializer(requests, many=True)
@@ -71,55 +67,39 @@ def requestsGet(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def requestGet(request, _id):
+def request_get(request, _id):
     try:
-        gotten_request = Request.objects.filter(isActive=True).get(id = _id)
+        request_obj = Request.objects.get(id=_id)
     except Request.DoesNotExist:
         return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
-    if request.user.id == gotten_request.author.id:
+    if request.user.id == request_obj.author.id:
         return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_404_NOT_FOUND)
-    serializer = RequestsSerializer(gotten_request, many=False)
+    if request_obj.isActive == False:
+        return Response({"detail": "Запрос скрыт."}, status=status.HTTP_403_FORBIDDEN)
+    serializer = RequestsSerializer(request_obj)
     return Response(serializer.data)
-
-
-def send_email(responded_user, gotten_request):
-    author = gotten_request.author
-    email_subject = "SkillExchange 1 new respond: User " + responded_user.name + " wants to help you!"
-    message = render_to_string(
-        'respond.html',
-        {
-            'user': responded_user,
-            'author': author,
-            'domain': 'localhost:3000',
-            'id': gotten_request.id,
-            'email': responded_user.email
-        }
-    )
-    email_message = EmailMessage(email_subject, message, settings.EMAIL_HOST_USER, [author.email])
-    email_message.send()
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def requestRespond(request, _id):
+def request_respond(request, _id):
     try:
-        gotten_request = Request.objects.filter(isActive=True).get(id = _id)
+        request_obj = Request.objects.get(id=_id)
     except Request.DoesNotExist:
         return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
-    if request.user.id == gotten_request.author.id:
-        return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_404_NOT_FOUND)
-    respondedUsers = gotten_request.respondedUsers
-    user = CustomUser.objects.get(id=request.user.id)
-    if user not in respondedUsers.all():
-        respondedUsers.add(CustomUser.objects.get(id=request.user.id))
-        send_email(request.user, gotten_request)
-    serializer = RequestsSerializer(gotten_request, data={'respondedUsers': respondedUsers}, partial=True)
-    serializer.is_valid()
-    serializer.save()
-    return Response(serializer.data)
+    if request.user.id == request_obj.author.id:
+        return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_403_FORBIDDEN)
+    if not request_obj.isActive:
+        return Response({"detail": "Запрос скрыт."}, status=status.HTTP_403_FORBIDDEN)
+    
+    if not request_obj.respondedUsers.filter(id=request.user.id).exists():
+        request_obj.respondedUsers.add(request.user)
+        send_email(request.user, request_obj)
+    request_serializer = RequestsSerializer(request_obj)
+    return Response(request_serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated])
-def reviewCreate(request, _id):
+def review_create(request, _id):
     try: 
         reviewee_obj = CustomUser.objects.get(id = _id) 
     except CustomUser.DoesNotExist:
@@ -148,7 +128,7 @@ def reviewCreate(request, _id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def skillsGet(request):
+def skills_get(request):
     skills = Skill.objects.all()
     serializer = SkillsSerializer(skills, many=True)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_200_OK)
