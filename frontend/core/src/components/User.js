@@ -13,7 +13,7 @@ function User({ user }) {
     <Card
       className="my-3 p-3 rounded"
       onClick={handleClick}
-      style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", height: "15vh"}}
+      style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", height: "20vh", overflow: "hidden"}}
     >
         <div
           style={{
@@ -22,12 +22,12 @@ function User({ user }) {
         >
           <div
             style={{
-              width: "min(30%, 10vh)",
+              width: "10vh",
+              height: "10vh",
               aspectRatio: "1 / 1",
               borderRadius: "50%",
               overflow: "hidden",
               border: "3px solid var(--secondary-color)",
-              display: "flex",
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -38,11 +38,12 @@ function User({ user }) {
               style={{
                 width: "100%",
                 height: "100%",
+                aspectRatio: "1 / 1",
                 objectFit: "cover",
               }}
             ></img>
           </div>
-          <div style={{ width: "70%", marginLeft: "2vw"}}>
+          <div style={{ width: "60%", marginLeft: "2vw"}}>
             <Card.Title as="h2" style={{fontSize: "22px" }}>{user.name}</Card.Title>
             <h3 style={{fontSize: "17px"}}>{user.rating}</h3>
           </div>
