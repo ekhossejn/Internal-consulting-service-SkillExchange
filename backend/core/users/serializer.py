@@ -22,25 +22,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model=CustomUser
         fields=['id', 'image', 'name', 'rating', 'email', 'skills', 'documents', 'reviews']
     
-    def validate_email(self, value):
-        domain = value.split('@')[1]
-        bad_domains = {'rambler.ru', 'yandex.ru'}
-        if domain in bad_domains:
-            raise serializers.ValidationError(
-                _("%(value)s is not a corporative email") % {'value': value}
-            )
-    
     def get_documents(self, obj):
-        documents = Document.objects.filter(owner=obj)
+        documents = obj.document_set.all()
         return DocumentsSerializer(documents, many=True).data
     
     def get_reviews(self, obj):
-        reviews = Review.objects.filter(reviewee=obj)
+        reviews = obj.gotten_reviews.all()
         return ReviewsSerializer(reviews, many=True).data
     
     def get_rating(self, obj):
         return round(obj.rating, 2)
 
+class CustomUserShortInfoSerializer(serializers.ModelSerializer):
+    rating = serializers.SerializerMethodField()
+
+    class Meta:
+        model=CustomUser
+        fields=['id', 'image', 'name', 'rating', 'email']
+    
+    def get_rating(self, obj):
+        return round(obj.rating, 2)
+    
 class UpdateRatingCustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
@@ -51,13 +53,12 @@ class UpdateCustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model=CustomUser
         fields=['name', 'image', 'skills']
-    
-    def update(self, instance, validated_data):
-        validated_data.pop('email', None)
-        validated_data.pop('rating', None)
-        validated_data.pop('reviews', None)
-        super().update(instance, validated_data)
-        return instance
+
+class UpdatedCustomUserSerializer(serializers.ModelSerializer):
+    skills = SkillsSerializer(many=True)
+    class Meta:
+        model=CustomUser
+        fields=['name', 'image', 'skills']
     
 class RequestsSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
@@ -69,29 +70,16 @@ class RequestsSerializer(serializers.ModelSerializer):
         fields=['id', 'image', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
 
     def get_image(self, obj):
-        user = CustomUser.objects.get(id = obj.author.id)
-        return CustomUserSerializer(user, many=False).data['image']
+        return obj.author.image.url
 
     def get_emails(self, obj):
-        responded_users = obj.respondedUsers
-        emails = []
-        for user in responded_users.all():
-            try: 
-                gotten_user = CustomUser.objects.get(id = user.id)
-                emails.append(gotten_user.email)
-            except Request.DoesNotExist: 
-                continue
-        return emails
+        return obj.respondedUsers.values_list('email', flat=True)
 
 class RequestsShortInfoSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    image = serializers.ImageField(source='author.image')
     class Meta:
         model=Request
         fields=['id', 'image', 'name', 'text', 'createdAt', 'isActive']
-    
-    def get_image(self, obj):
-        user = CustomUser.objects.get(id = obj.author.id)
-        return CustomUserSerializer(user, many=False).data['image']
 
 class DocumentsSerializer(serializers.ModelSerializer):
     class Meta:
