@@ -13,6 +13,8 @@ function SearchUsers() {
   const [users, setUsers] = useState([]);
   const [shownUsers, setShownUsers] = useState([]);
   const [sortOrder, setSortOrder] = useState("");
+  const [ratingFilter, setRatingFilter] = useState(0);
+  const [inputRating, setInputRating] = useState();
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -24,7 +26,7 @@ function SearchUsers() {
       try {
         const { data } = await axios.post(
           `/search/users/get/`,
-          {},
+          { filter_rating: ratingFilter },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -41,7 +43,7 @@ function SearchUsers() {
     };
 
     fetchRequests();
-  }, []);
+  }, [ratingFilter]);
 
   useEffect(() => {
     if (error) {
@@ -52,15 +54,9 @@ function SearchUsers() {
   useEffect(() => {
     let sortedUsers = [...users];
     if (sortOrder === "from_higher") {
-      sortedUsers.sort(
-        (a, b) =>
-          b.rating - a.rating
-      );
+      sortedUsers.sort((a, b) => b.rating - a.rating);
     } else if (sortOrder === "from_lower") {
-      sortedUsers.sort(
-        (a, b) =>
-          a.rating - b.rating
-      );
+      sortedUsers.sort((a, b) => a.rating - b.rating);
     }
     setShownUsers(sortedUsers);
   }, [sortOrder, users]);
@@ -78,20 +74,64 @@ function SearchUsers() {
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
-              marginTop: "2vh"
+              marginTop: "2vh",
             }}
           >
             <h1>Люди</h1>
-            <select
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="form-select"
-              style={{ width: "30vw" }}
-            >
-              <option value="">-</option>
-              <option value="from_higher">Сначала высокий рейтинг</option>
-              <option value="from_lower">Сначала низкий рейтинг</option>
-            </select>
+            <div style={{ display: "flex", gap: "1vw" }}>
+              <input
+                className="form-control"
+                type="text"
+                inputMode="decimal"
+                value={inputRating ?? ""}
+                onChange={(e) => {
+                  let value = e.target.value;
+
+                  if (value === "") {
+                    setInputRating("");
+                    return;
+                  }
+                  if (value.match(/^\d*[.,]?\d{0,2}$/)) {
+                    const numericValue = parseFloat(value);
+                    if (numericValue >= 0 && numericValue <= 5) {
+                      setInputRating(value);
+                    }
+                  }
+                }}
+                onBlur={() => {
+                  if (inputRating === "" || inputRating === undefined) {
+                    setRatingFilter(0);
+                  } else {
+                    setRatingFilter(parseFloat(inputRating));
+                  }
+                }}
+                placeholder="Рейтинг не меньше..."
+                style={{ appearance: "none", MozAppearance: "textfield" }}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                    e.preventDefault();
+                  }
+
+                  if (e.key === "Enter") {
+                    if (inputRating === "" || inputRating === undefined) {
+                      setRatingFilter(0);
+                    } else {
+                      setRatingFilter(parseFloat(inputRating));
+                    }
+                  }
+                }}
+              />
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="form-select"
+                style={{ width: "30vw" }}
+              >
+                <option value="">-</option>
+                <option value="from_higher">Сначала высокий рейтинг</option>
+                <option value="from_lower">Сначала низкий рейтинг</option>
+              </select>
+            </div>
           </div>
           {shownUsers.map((user) => (
             <Col key={user.id} sm={12} md={6} lg={4} xl={3}>
