@@ -22,8 +22,8 @@ function User({ user }) {
         >
           <div
             style={{
-              width: "10vh",
-              height: "10vh",
+              width: "min(30%, 10vh)",
+              aspectRatio: "1 / 1",
               borderRadius: "50%",
               overflow: "hidden",
               border: "3px solid var(--secondary-color)",
@@ -42,8 +42,9 @@ function User({ user }) {
               }}
             ></img>
           </div>
-          <div style={{ flex: 2 }}>
-            <Card.Title as="h3" style={{ marginLeft: "2vw" }}>{user.name}</Card.Title>
+          <div style={{ width: "70%", marginLeft: "2vw"}}>
+            <Card.Title as="h2" style={{fontSize: "22px" }}>{user.name}</Card.Title>
+            <h3 style={{fontSize: "17px"}}>{user.rating}</h3>
           </div>
         </div>
     </Card>
