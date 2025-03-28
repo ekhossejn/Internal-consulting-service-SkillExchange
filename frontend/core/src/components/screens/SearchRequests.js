@@ -6,6 +6,7 @@ import Request from "../Request";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Loader";
 import Message from "../Message";
+import Select from "react-select";
 
 function SearchRequests() {
   const [error, setError] = useState();
@@ -15,10 +16,19 @@ function SearchRequests() {
   const [sortOrder, setSortOrder] = useState("");
   const [ratingFilter, setRatingFilter] = useState(0);
   const [inputRating, setInputRating] = useState();
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [inputSkills, setInputSkills] = useState([]);
+  const [skills, setSkills] = useState([]);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
+
+  const handleChange = (selectedOptions) => {
+    setInputSkills(
+      selectedOptions ? selectedOptions.map((opt) => opt.value) : []
+    );
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -26,7 +36,7 @@ function SearchRequests() {
       try {
         const { data } = await axios.post(
           `/search/requests/get/`,
-          { filter_rating: ratingFilter },
+          { filter_rating: ratingFilter, filter_skills: selectedSkills },
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -43,7 +53,7 @@ function SearchRequests() {
     };
 
     fetchRequests();
-  }, [ratingFilter]);
+  }, [ratingFilter, selectedSkills]);
 
   useEffect(() => {
     if (error) {
@@ -66,6 +76,26 @@ function SearchRequests() {
     }
     setShownRequests(sortedRequests);
   }, [sortOrder, requests]);
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get(`/search/skills/get/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setSkills(data);
+      } catch (error) {
+        setError(error.response?.data?.detail || error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   return (
     <Container>
@@ -124,6 +154,41 @@ function SearchRequests() {
                       setRatingFilter(parseFloat(inputRating));
                     }
                   }
+                }}
+              />
+              <Select
+                options={skills.map((skill) => ({
+                  value: skill.id,
+                  label: skill.name,
+                }))}
+                isMulti
+                placeholder="Необходимые скиллы..."
+                value={skills
+                  .filter((skill) => inputSkills.includes(skill.id))
+                  .map((s) => ({ value: s.id, label: s.name }))}
+                onChange={handleChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSelectedSkills(inputSkills);
+                  }
+                }}
+                className="skill-selector"
+                styles={{
+                  control: (provided) => ({
+                    ...provided,
+                    width: "30vw",
+                    height: "6vh",
+                    backgroundColor: "var(--bs-light)",
+                  }),
+                  menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                  multiValue: (provided) => ({
+                    ...provided,
+                    backgroundColor: "var(--bs-secondary)",
+                  }),
+                  multiValueLabel: (provided) => ({
+                    ...provided,
+                    color: "var(--bs-body)",
+                  }),
                 }}
               />
               <select
