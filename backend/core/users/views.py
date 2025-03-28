@@ -3,7 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 
 from authentication.models import CustomUser  
 from .models import Request, Skill, Document
-from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer, UpdateCustomUserSerializer, UpdatedCustomUserSerializer
+from .serializer import RequestsShortInfoSerializer, RequestsSerializer, CompanySerializer, UpdateCustomUserSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 import os
@@ -21,17 +21,15 @@ def profile_get(request):
 @permission_classes([IsAuthenticated])
 def profile_update(request):
     image = request.FILES.get('image')
-    if not image:
-        return Response({"detail": "Файл не был загружен!"}, status=status.HTTP_400_BAD_REQUEST)
-    if not check_is_image(image):
+    if image and not check_is_image(image):
         return Response({"detail": "Файл не является корректным изображением!"}, status=status.HTTP_400_BAD_REQUEST)
-    
-    request.data['image'] = image
+    if image:
+        request.data['image'] = image
     user_serializer = UpdateCustomUserSerializer(request.user, data=request.data, partial=True)
     if user_serializer.is_valid():
         user_serializer.save()
-        updated_user_serializer = UpdatedCustomUserSerializer(request.user)
-        return Response(updated_user_serializer.data, status=status.HTTP_200_OK)
+        user_serializer = CustomUserSerializer(request.user)
+        return Response(user_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

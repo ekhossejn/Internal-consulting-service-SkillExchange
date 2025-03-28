@@ -52,13 +52,7 @@ class UpdateCustomUserSerializer(serializers.ModelSerializer):
     skills = serializers.PrimaryKeyRelatedField(queryset=Skill.objects.all(), many=True)
     class Meta:
         model=CustomUser
-        fields=['name', 'image', 'skills']
-
-class UpdatedCustomUserSerializer(serializers.ModelSerializer):
-    skills = SkillsSerializer(many=True)
-    class Meta:
-        model=CustomUser
-        fields=['name', 'image', 'skills']
+        fields=['name', 'image', 'skills',]
     
 class RequestsSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
