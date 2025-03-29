@@ -122,11 +122,16 @@ function UserScreen({ params }) {
                 ))}
               </div>
             </Card>
-            {mainInfo.documents.map((document) => (
-              <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
-                <Document document={document} />
-              </Col>
-            ))}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "2vh", width: "90%"}}>
+              {mainInfo.documents.map((document) => (
+                <div
+                  key={document.id}
+                  style={{ flex: "0 0 150px", maxWidth: "200px" }}
+                >
+                  <Document document={document} />
+                </div>
+              ))}
+            </div>
           </div>
           <div
             style={{
