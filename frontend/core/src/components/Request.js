@@ -19,7 +19,7 @@ function Request({ request }) {
       <Card
         className="my-3 p-3 rounded"
         onClick={handleClick}
-        style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", maxHeight: "20vh", overflow: "auto"}}
+        style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", maxHeight: "20vh", height: "20vh", overflow: "auto"}}
       >
           <div
             style={{
