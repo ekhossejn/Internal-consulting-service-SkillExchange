@@ -168,7 +168,7 @@ function MyRequestScreen() {
               className="my-3 p-3 rounded"
               style={{ backgroundColor: "var(--bs-light)", minHeight: "8vh" }}
             >
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10vh" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "vw", rowGap: "vh" }}>
                 {mainInfo.requiredSkills.map((skill) => (
                   <Skill key={skill.id} skill={skill} />
                 ))}
