@@ -193,6 +193,8 @@ function SearchRequests() {
                     width: "30vw",
                     height: "6vh",
                     backgroundColor: "var(--bs-light)",
+                    maxHeight: "6vh",
+                    overflow: "auto",
                   }),
                   menu: (provided) => ({ ...provided, zIndex: 9999 }),
                   multiValue: (provided) => ({
