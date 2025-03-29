@@ -34,17 +34,31 @@ function SearchRequests() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.post(
-          `/search/requests/get/`,
-          { filter_rating: ratingFilter, filter_skills: selectedSkills },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setRequests(data);
-        setShownRequests(data);
+        if (selectedSkills.length == 0) {
+          const { data } = await axios.post(
+            `/search/requests/get/`,
+            { filter_rating: ratingFilter },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setRequests(data);
+          setShownRequests(data);
+        } else {
+          const { data } = await axios.post(
+            `/search/requests/get/`,
+            { filter_rating: ratingFilter, filter_skills: selectedSkills },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setRequests(data);
+          setShownRequests(data);
+        }
       } catch (error) {
         setError(error.response?.data?.detail || error.message);
       } finally {
@@ -109,12 +123,12 @@ function SearchRequests() {
             style={{
               display: "flex",
               marginTop: "2vh",
-              justifyContent: "space-between"
+              justifyContent: "space-between",
             }}
           >
             <h1>Запросы</h1>
             <div style={{ display: "flex", gap: "1vw" }}>
-                <input
+              <input
                 className="form-control"
                 type="text"
                 inputMode="decimal"

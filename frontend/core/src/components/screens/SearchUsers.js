@@ -33,17 +33,31 @@ function SearchUsers() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.post(
-          `/search/users/get/`,
-          { filter_rating: ratingFilter, filter_skills: selectedSkills },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
-        setUsers(data);
-        setShownUsers(data);
+        if (selectedSkills.length == 0) {
+          const { data } = await axios.post(
+            `/search/users/get/`,
+            { filter_rating: ratingFilter },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setUsers(data);
+          setShownUsers(data);
+        } else {
+          const { data } = await axios.post(
+            `/search/users/get/`,
+            { filter_rating: ratingFilter, filter_skills: selectedSkills },
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setUsers(data);
+          setShownUsers(data);
+        }
       } catch (error) {
         setError(error.response?.data?.detail || error.message);
       } finally {
