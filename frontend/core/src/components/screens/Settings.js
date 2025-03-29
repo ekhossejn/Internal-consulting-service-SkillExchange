@@ -331,7 +331,7 @@ function Settings() {
                   variant="primary"
                   onClick={handleNameSave}
                   disabled={isUpdatingName}
-                  style={{ marginTop: "10px", width: '200px' }}
+                  style={{ marginTop: "10px", width: "200px" }}
                 >
                   {isUpdatingName ? "Сохранение..." : "Сохранить"}
                 </Button>
@@ -350,8 +350,10 @@ function Settings() {
                     control: (provided) => ({
                       ...provided,
                       width: "40vw",
-                      height: "6vh",
+                      minHeight: "6vh",
                       backgroundColor: "var(--bs-light)",
+                      maxHeight: "20vh",
+                      overflow: "auto",
                     }),
                     menu: (provided) => ({ ...provided, zIndex: 9999 }),
                     multiValue: (provided) => ({
@@ -366,7 +368,11 @@ function Settings() {
                 />
               </Col>
               <Col>
-                <Button variant="primary" onClick={handleSkillsSave} style={{ width: '200px' }}>
+                <Button
+                  variant="primary"
+                  onClick={handleSkillsSave}
+                  style={{ width: "200px" }}
+                >
                   Сохранить
                 </Button>
               </Col>
@@ -421,7 +427,11 @@ function Settings() {
                 </Form.Group>
               </Col>
               <Col>
-                <Button variant="primary" onClick={handleFileUpload} style={{ width: '200px' }}>
+                <Button
+                  variant="primary"
+                  onClick={handleFileUpload}
+                  style={{ width: "200px" }}
+                >
                   Сохранить
                 </Button>
               </Col>
