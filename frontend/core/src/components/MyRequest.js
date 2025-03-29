@@ -24,7 +24,7 @@ function MyRequest({ myRequest }) {
         cursor: "pointer",
         maxHeight: "20vh",
         overflow: "auto",
-        
+        height: "20vh",
       }}
     >
         <Card.Title as="h3" style={{fontSize: "22px" }}>{myRequest.name}</Card.Title>
