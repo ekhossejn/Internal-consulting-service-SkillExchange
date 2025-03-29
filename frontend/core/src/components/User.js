@@ -13,7 +13,7 @@ function User({ user }) {
     <Card
       className="my-3 p-3 rounded"
       onClick={handleClick}
-      style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", height: "20vh", overflow: "hidden"}}
+      style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", maxHeight: "20vh", overflow: "auto"}}
     >
         <div
           style={{

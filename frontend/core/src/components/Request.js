@@ -19,7 +19,7 @@ function Request({ request }) {
       <Card
         className="my-3 p-3 rounded"
         onClick={handleClick}
-        style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", height: "20vh", overflow: "hidden"}}
+        style={{ cursor: "pointer", backgroundColor: "var(--bs-light)", maxHeight: "20vh", overflow: "auto"}}
       >
           <div
             style={{
@@ -54,7 +54,7 @@ function Request({ request }) {
               <h3 style={{fontSize: "14px"}}>{new Date(request.createdAt).toLocaleString('ru-RU', options)}</h3>
             </div>
           </div>
-          <h3 style={{fontSize: "17px", marginTop: "vh"}}>{request.text}</h3>
+          <h3 style={{fontSize: "17px", marginTop: "1.5vh"}}>{request.text}</h3>
       </Card>
     );
 }
