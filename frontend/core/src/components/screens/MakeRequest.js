@@ -4,6 +4,7 @@ import Request from "../Request";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Loader from "../Loader";
 import Message from "../Message";
+import Select from "react-select";
 import {
   Container,
   Row,
@@ -27,6 +28,10 @@ function MakeRequest() {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
+
+  const handleChange = (selectedOptions) => {
+    setSkills(selectedOptions ? selectedOptions.map((opt) => opt.value) : []);
+  };
 
   useEffect(() => {
     const fetchAllSkills = async () => {
@@ -103,10 +108,11 @@ function MakeRequest() {
         ) : error ? (
           <Message variant="danger">{error}</Message>
         ) : (
-          <Row>
-            <Col md={4}></Col>
-            <Col md={4}>
-              <Card>
+<div style={{ 
+  display: "flex", 
+  justifyContent: "center", 
+}}>
+              <Card style={{width: "40vw"}}>
                 <Card.Body>
                   <Form onSubmit={makeHandler}>
                     <Form.Group className="mb-3" controlId="name">
@@ -117,36 +123,44 @@ function MakeRequest() {
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         required
+                        style={{ width: "35vw" }} 
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>Необходимые скиллы</Form.Label>
-                      <Form.Select
-                        multiple
-                        value={skills}
-                        onChange={(e) =>
-                          setSkills(
-                            [...e.target.selectedOptions].map(
-                              (option) => option.value
-                            )
-                          )
-                        }
-                      >
-                        {allSkills.map((skill) => (
-                          <option key={skill.id} value={skill.id}>
-                            {skill.name}
-                          </option>
-                        ))}
-                      </Form.Select>
+                      <Select
+                        options={allSkills.map((skill) => ({
+                          value: skill.id,
+                          label: skill.name,
+                        }))}
+                        isMulti
+                        placeholder="Выберите скиллы..."
+                        value={allSkills
+                          .filter((skill) => skills.includes(skill.id))
+                          .map((s) => ({ value: s.id, label: s.name }))}
+                        onChange={handleChange}
+                        className="skill-selector"
+                        styles={{
+                          control: (provided) => ({
+                            ...provided,
+                            width: "35vw",
+                            minHeight: "6vh",
+                            backgroundColor: "var(--bs-light)",
+                            maxHeight: "20vw",
+                            overflow: "auto",
+                          }),
+                          menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                          multiValue: (provided) => ({
+                            ...provided,
+                            backgroundColor: "var(--bs-secondary)",
+                          }),
+                          multiValueLabel: (provided) => ({
+                            ...provided,
+                            color: "var(--bs-body)",
+                          }),
+                        }}
+                      />
                     </Form.Group>
-                    <Button
-                      className="btn btn-danger btn-sm mt-2"
-                      onClick={() => setSkills([])}
-                    >
-                      Очистить выбор
-                    </Button>
-                    <br />
-                    <br />
                     <Form.Group className="mb-3" controlId="text">
                       <Form.Label>Текст запроса</Form.Label>
                       <Form.Control
@@ -155,6 +169,7 @@ function MakeRequest() {
                         value={text}
                         onChange={(e) => setText(e.target.value)}
                         required
+                        style={{ width: "35vw" }}
                       />
                     </Form.Group>
                     <br />
@@ -167,9 +182,7 @@ function MakeRequest() {
                   </Form>
                 </Card.Body>
               </Card>
-            </Col>
-            <Col md={4}></Col>
-          </Row>
+              </div>
         )}
       </Container>
     </>
