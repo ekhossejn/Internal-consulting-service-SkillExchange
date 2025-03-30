@@ -108,81 +108,83 @@ function MakeRequest() {
         ) : error ? (
           <Message variant="danger">{error}</Message>
         ) : (
-<div style={{ 
-  display: "flex", 
-  justifyContent: "center", 
-}}>
-              <Card style={{width: "40vw"}}>
-                <Card.Body>
-                  <Form onSubmit={makeHandler}>
-                    <Form.Group className="mb-3" controlId="name">
-                      <Form.Label>Название запроса</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder=""
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                        style={{ width: "35vw" }} 
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Необходимые скиллы</Form.Label>
-                      <Select
-                        options={allSkills.map((skill) => ({
-                          value: skill.id,
-                          label: skill.name,
-                        }))}
-                        isMulti
-                        placeholder="Выберите скиллы..."
-                        value={allSkills
-                          .filter((skill) => skills.includes(skill.id))
-                          .map((s) => ({ value: s.id, label: s.name }))}
-                        onChange={handleChange}
-                        className="skill-selector"
-                        styles={{
-                          control: (provided) => ({
-                            ...provided,
-                            width: "35vw",
-                            minHeight: "6vh",
-                            backgroundColor: "var(--bs-light)",
-                            maxHeight: "20vw",
-                            overflow: "auto",
-                          }),
-                          menu: (provided) => ({ ...provided, zIndex: 9999 }),
-                          multiValue: (provided) => ({
-                            ...provided,
-                            backgroundColor: "var(--bs-secondary)",
-                          }),
-                          multiValueLabel: (provided) => ({
-                            ...provided,
-                            color: "var(--bs-body)",
-                          }),
-                        }}
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3" controlId="text">
-                      <Form.Label>Текст запроса</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder=""
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        required
-                        style={{ width: "35vw" }}
-                      />
-                    </Form.Group>
-                    <br />
-                    <div className="d-grid gap-2">
-                      <Button className="btn btn-md btn-success" type="submit">
-                        {" "}
-                        Создать{" "}
-                      </Button>
-                    </div>
-                  </Form>
-                </Card.Body>
-              </Card>
-              </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Card style={{ width: "40vw" }}>
+              <Card.Body>
+                <Form onSubmit={makeHandler}>
+                  <Form.Group className="mb-3" controlId="name">
+                    <Form.Label>Название запроса</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder=""
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                      style={{ width: "35vw" }}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Необходимые скиллы</Form.Label>
+                    <Select
+                      options={allSkills.map((skill) => ({
+                        value: skill.id,
+                        label: skill.name,
+                      }))}
+                      isMulti
+                      placeholder="Выберите скиллы..."
+                      value={allSkills
+                        .filter((skill) => skills.includes(skill.id))
+                        .map((s) => ({ value: s.id, label: s.name }))}
+                      onChange={handleChange}
+                      className="skill-selector"
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          width: "35vw",
+                          minHeight: "6vh",
+                          backgroundColor: "var(--bs-light)",
+                          maxHeight: "20vw",
+                          overflow: "auto",
+                        }),
+                        menu: (provided) => ({ ...provided, zIndex: 9999 }),
+                        multiValue: (provided) => ({
+                          ...provided,
+                          backgroundColor: "var(--bs-secondary)",
+                        }),
+                        multiValueLabel: (provided) => ({
+                          ...provided,
+                          color: "var(--bs-body)",
+                        }),
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3" controlId="text">
+                    <Form.Label>Текст запроса</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder=""
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                      required
+                      style={{ width: "35vw" }}
+                    />
+                  </Form.Group>
+                  <br />
+                  <div className="d-grid gap-2">
+                    <Button className="btn btn-md btn-success" type="submit">
+                      {" "}
+                      Создать{" "}
+                    </Button>
+                  </div>
+                </Form>
+              </Card.Body>
+            </Card>
+          </div>
         )}
       </Container>
     </>

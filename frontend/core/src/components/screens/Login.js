@@ -27,6 +27,13 @@ function Login() {
   const redirect = location.search ? location.search.split("=")[1] : "/profile";
 
   useEffect(() => {
+    document.body.style.backgroundColor = "rgba(55, 141, 252, 0.7) ";
+    return () => {
+      document.body.style.backgroundColor = "";
+    };
+  }, []);
+
+  useEffect(() => {
     if (error) {
       setMessage(error);
     }
@@ -82,72 +89,91 @@ function Login() {
   return (
     <>
       <Container className="mt-3">
-        <Row>
-          <Col md={4}></Col>
-          <Col md={4}>
-            {loading ? (
-              <Loader />
-            ) : error ? (
-              <Message variant="danger">{error}</Message>
-            ) : (
-              <Card>
-                <Card.Header
-                  as="h3"
-                  className="text-center bg-primary text-light"
-                >
-                  Вход
-                </Card.Header>
-                <Card.Body>
-                  <Form onSubmit={submitHandler}>
-                    <Form.Group className="mb-3" controlId="email">
-                      <Form.Label>Почта</Form.Label>
+        {loading ? (
+          <Loader />
+        ) : error ? (
+          <Message variant="danger">{error}</Message>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <Card
+              style={{
+                marginTop: "15vh",
+                height: "60vh",
+                width: "30vw",
+                borderRadius: "20px",
+                overflow: "auto",
+                borderRadius: "20px",
+                padding: "0 20px",  // Пустые области по бокам (padding по горизонтали)
+                border: "1px solid transparent",
+              }}
+            >
+              <Card.Header as="h1" className="text-center border-0">
+                <br/>
+                Вход
+              </Card.Header>
+              <Card.Body style={{ justifyContent: "center" }}>
+                <Form onSubmit={submitHandler}>
+                  <Form.Group className="mb-3" controlId="email">
+                    <Form.Label>Почта</Form.Label>
+                    <Form.Control
+                      type="email"
+                      placeholder="name@example.ru"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      style={{height: "6vh"}}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>
+                      {" "}
+                      <span>
+                        <i className={show}></i>
+                      </span>{" "}
+                      Пароль
+                    </Form.Label>
+                    <InputGroup className="mb-3">
+                      <InputGroup.Checkbox onClick={showPassword} />{" "}
                       <Form.Control
-                        type="email"
-                        placeholder="name@example.ru"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        type="password"
+                        placeholder="!5uper5afePa55w0rd!"
+                        id="pass1"
+                        value={pass1}
+                        onChange={(e) => setPass1(e.target.value)}
                         required
+                        style={{height: "6vh"}}
                       />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
-                      <Form.Label>
-                        {" "}
-                        <span>
-                          <i className={show}></i>
-                        </span>{" "}
-                        Пароль
-                      </Form.Label>
-                      <InputGroup className="mb-3">
-                        <InputGroup.Checkbox onClick={showPassword} />{" "}
-                        <Form.Control
-                          type="password"
-                          placeholder="!5uper5afePa55w0rd!"
-                          id="pass1"
-                          value={pass1}
-                          onChange={(e) => setPass1(e.target.value)}
-                          required
-                        />
-                      </InputGroup>
-                    </Form.Group>
-                    <div className="d-grid gap-2">
-                      <Button className="btn btn-md btn-success" type="submit">
-                        {" "}
-                        Войти{" "}
-                      </Button>
-                    </div>
-                  </Form>
-                  <Row className="py-3">
-                    <Col>
-                      Новый пользователь?
-                      <Link to="/signup"> Зарегистироваться</Link>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            )}
-          </Col>
-          <Col md={4}></Col>
-        </Row>
+                    </InputGroup>
+                  </Form.Group>
+                  <div className="d-grid gap-2">
+                    <Button
+                      className="btn btn-md btn-success"
+                      type="submit"
+                      style={{
+                        color: "var(--bs-light)",
+                        backgroundColor: "rgba(55, 141, 252, 0.7)",
+                      }}
+                    >
+                      {" "}
+                      Войти{" "}
+                    </Button>
+                  </div>
+                </Form>
+                <Row className="py-3">
+                  <Col>
+                    Новый пользователь?
+                    <Link to="/signup"> Зарегистироваться</Link>
+                  </Col>
+                </Row>
+              </Card.Body>
+            </Card>
+          </div>
+        )}
       </Container>
     </>
   );
