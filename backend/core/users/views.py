@@ -56,7 +56,7 @@ def document_delete(request, _id):
     if request.user.id != document_obj.owner.id:
         return Response({"detail": "У вас нет доступа для удаления этого запроса"}, status=status.HTTP_403_FORBIDDEN)
     
-    url = os.path.join(core.settings.STATIC_URL, "images", str(document_obj.image))
+    url = os.path.join(core.settings.MEDIA_ROOT, "documents", str(document_obj.image))
     if os.path.exists(url):
        os.remove(url)
     document_obj.delete()

@@ -20,7 +20,7 @@ def users_get(request):
 
     if filter_skills != None: 
         if isinstance(filter_skills, list):
-            users = users.filter(skills__id__in=filter_skills)
+            users = users.filter(skills__id__in=filter_skills).distinct()
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -53,7 +53,7 @@ def requests_get(request):
     requests = Request.objects.filter(isActive=True).exclude(author=request.user).select_related('author')
     if filter_skills != None: 
         if isinstance(filter_skills, list):
-            requests = requests.filter(requiredSkills__id__in=filter_skills)
+            requests = requests.filter(requiredSkills__id__in=filter_skills).distinct()
         else:
             return Response({"error": "filter_skills must be a list."}, status=status.HTTP_400_BAD_REQUEST)
     if filter_rating != None and filter_rating > 0: 
