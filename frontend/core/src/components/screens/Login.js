@@ -65,11 +65,15 @@ function Login() {
       localStorage.setItem("userInfo", JSON.stringify(data));
       setUserInfo(data);
     } catch (error) {
-      setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
-      );
+      if (error.response.data.detail == "No active account found with the given credentials") {
+        setError(
+          "Подтверждённого аккаунта с такими данными не существует. Может, Вы забыли подвердить регистрацию на почте?"
+        );
+      } else {
+        setError(
+          "Не удалось войти, попробуйте позднее."
+        );
+     }
     } finally {
       setLoading(false);
     }
@@ -91,8 +95,6 @@ function Login() {
       <Container className="mt-3">
         {loading ? (
           <Loader />
-        ) : error ? (
-          <Message variant="danger">{error}</Message>
         ) : (
           <div
             style={{
@@ -103,12 +105,13 @@ function Login() {
             <Card
               style={{
                 marginTop: "15vh",
-                height: "60vh",
+                minHeight: "60vh",
+                maxHeight: "80vh",
                 width: "30vw",
                 borderRadius: "20px",
                 overflow: "auto",
                 borderRadius: "20px",
-                padding: "0 20px",  // Пустые области по бокам (padding по горизонтали)
+                padding: "0 20px",
                 border: "1px solid transparent",
               }}
             >
@@ -170,6 +173,7 @@ function Login() {
                     <Link to="/signup"> Зарегистироваться</Link>
                   </Col>
                 </Row>
+                {error && <Message variant="danger">{error}</Message>}
               </Card.Body>
             </Card>
           </div>

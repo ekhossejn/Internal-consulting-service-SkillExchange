@@ -117,7 +117,7 @@ function MakeReview({ params }) {
                     <div className="d-grid gap-2">
                       <Button className="btn btn-md btn-success" type="submit">
                         {" "}
-                        Отправить{" "}
+                        Создать{" "}
                       </Button>
                     </div>
                   </Form>
