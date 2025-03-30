@@ -106,13 +106,13 @@ function Profile() {
                 minHeight: "8vh",
               }}
             >
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "vw" }}>
                 {mainInfo.skills.map((skill) => (
                   <Skill key={skill.id} skill={skill} />
                 ))}
               </div>
             </Card>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "2vh", width: "90%"}}>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "2vw", width: "90%"}}>
               {mainInfo.documents.map((document) => (
                 <div
                   key={document.id}
