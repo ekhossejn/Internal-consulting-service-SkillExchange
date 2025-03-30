@@ -57,9 +57,7 @@ function Signup() {
       setUserInfo(data);
     } catch (error) {
       setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
+        "Не удалось зарегистрироваться, попробуйте позднее."
       );
     } finally {
       setLoading(false);
@@ -88,8 +86,6 @@ function Signup() {
           <Col md={4}>
             {loading ? (
               <Loader />
-            ) : error ? (
-              <Message variant="danger">{error}</Message>
             ) : (
               <Card>
                 <Card.Header
@@ -170,6 +166,7 @@ function Signup() {
                       <Link to="/login"> Войти</Link>
                     </Col>
                   </Row>
+                  {error && <Message variant="danger">{error}</Message>}
                 </Card.Body>
               </Card>
             )}
