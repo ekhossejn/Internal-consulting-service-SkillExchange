@@ -54,7 +54,7 @@ def register(request):
             'verification.html',
             {
                 'user': user,
-                'domain': '127.0.0.1:8000',
+                'domain': '185.207.1.149',
                 'uid': urlsafe_base64_encode(force_bytes(user.id)),
                 'token': generate_token.make_token(user)
             }
