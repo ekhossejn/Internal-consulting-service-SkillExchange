@@ -25,10 +25,13 @@ def profile_update(request):
         return Response({"detail": "Файл не является корректным изображением!"}, status=status.HTTP_400_BAD_REQUEST)
     if image:
         request.data['image'] = image
+    old_image_url = os.path.join(core.settings.MEDIA_ROOT, str(request.user.image))
     user_serializer = UpdateCustomUserSerializer(request.user, data=request.data, partial=True)
     if user_serializer.is_valid():
         user_serializer.save()
         user_serializer = CustomUserSerializer(request.user)
+        if image and os.path.exists(old_image_url) and not old_image_url.endswith("avatars/default.jpg"):
+            os.remove(old_image_url)
         return Response(user_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -48,6 +51,8 @@ def document_upload(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def document_delete(request, _id):
+
+    print("moo")
     try:
         document_obj = Document.objects.get(id=_id)
     except Document.DoesNotExist:
@@ -55,8 +60,8 @@ def document_delete(request, _id):
     
     if request.user.id != document_obj.owner.id:
         return Response({"detail": "У вас нет доступа для удаления этого запроса"}, status=status.HTTP_403_FORBIDDEN)
-    
-    url = os.path.join(core.settings.MEDIA_ROOT, "documents", str(document_obj.image))
+    url = os.path.join(core.settings.MEDIA_ROOT, str(document_obj.image))
+    print(url)
     if os.path.exists(url):
        os.remove(url)
     document_obj.delete()

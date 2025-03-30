@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from users.models import Company
+import os
 
 def get_default_company():
     # TODO: специальная для superuser
@@ -23,10 +24,19 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
         return self.create_user(email, password, **extra_fields)
 
+def path_and_rename(instance, filename):
+    upload_to = 'avatars'
+    ext = filename.split('.')[-1]
+    if instance.pk:
+        filename = '{}.{}'.format(instance.pk, ext)
+    else:
+        filename = '{}.{}'.format(uuid4().hex, ext)
+    return os.path.join(upload_to, filename)
+
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    image = models.ImageField(default='avatars/default.jpg', upload_to='avatars')
+    image = models.ImageField(default='avatars/default.jpg', upload_to=path_and_rename)
     name = models.CharField(max_length=20, null=True)
     rating = models.FloatField(default=0)
     rating_sum = models.IntegerField(default=0)
