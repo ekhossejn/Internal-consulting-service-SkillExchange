@@ -23,6 +23,7 @@ function RequestScreen({ params }) {
   const accessToken = userInfo?.access;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
+  const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
   });

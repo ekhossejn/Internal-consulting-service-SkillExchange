@@ -19,7 +19,8 @@ function SearchRequests() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [inputSkills, setInputSkills] = useState([]);
   const [skills, setSkills] = useState([]);
-
+  const [status, setStatus] = useState(200);
+  
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const accessToken = userInfo?.access;
@@ -60,7 +61,12 @@ function SearchRequests() {
           setShownRequests(data);
         }
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -70,7 +76,7 @@ function SearchRequests() {
   }, [ratingFilter, selectedSkills]);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
@@ -102,7 +108,12 @@ function SearchRequests() {
         });
         setSkills(data);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }

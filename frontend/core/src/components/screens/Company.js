@@ -12,6 +12,7 @@ function Company() {
   const [mainInfo, setMainInfo] = useState({});
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
+  const [status, setStatus] = useState(200);
 
   useEffect(() => {
     const fetchOrganisationInfo = async () => {
@@ -24,7 +25,12 @@ function Company() {
         });
         setMainInfo(mainData);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -34,7 +40,7 @@ function Company() {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
