@@ -15,6 +15,7 @@ function Settings() {
   const [loading, setLoading] = useState();
   const [availableSkills, setAvailableSkills] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
+  const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     image: "",
     name: "",
@@ -47,7 +48,12 @@ function Settings() {
           }))
         );
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -65,7 +71,12 @@ function Settings() {
           }))
         );
       } catch (error) {
-        console.error("Error fetching skills:", error);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       }
     };
 
@@ -74,7 +85,7 @@ function Settings() {
   }, [accessToken]);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
@@ -102,10 +113,12 @@ function Settings() {
           image: data.image,
         }));
       } catch (error) {
-        console.error(
-          "Error uploading image:",
-          error.response?.data || error.message
-        );
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -139,10 +152,12 @@ function Settings() {
         name: data.name,
       }));
     } catch (error) {
-      console.error(
-        "Error updating name:",
-        error.response?.data || error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
       setIsUpdatingName(false);
@@ -167,10 +182,12 @@ function Settings() {
         skills: data.skills,
       }));
     } catch (error) {
-      console.error(
-        "Error updating skills:",
-        error.response?.data || error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
@@ -202,10 +219,12 @@ function Settings() {
       setSelectedDocument(null);
       setDocModalOpen(false);
     } catch (error) {
-      console.error(
-        "Error deleting document:",
-        error.response?.data || error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
@@ -245,10 +264,12 @@ function Settings() {
 
       setSelectedFile(null);
     } catch (error) {
-      console.error(
-        "Error uploading image:",
-        error.response?.data || error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
