@@ -16,6 +16,7 @@ function MyRequests() {
   const [loading, setLoading] = useState();
   const [requests, setRequests] = useState([]);
   const [deleteInfo, setDeleteInfo] = useState();
+  const [status, setStatus] = useState(200);
 
   const Delete = async (e, id) => {
     e.preventDefault();
@@ -38,11 +39,12 @@ function MyRequests() {
       setDeleteInfo(data);
       window.location.reload();
     } catch (error) {
-      setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
@@ -59,7 +61,12 @@ function MyRequests() {
         });
         setRequests(data);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -69,7 +76,7 @@ function MyRequests() {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);

@@ -30,6 +30,7 @@ function MyRequestScreen() {
   const accessToken = userInfo?.access;
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
     emails: [],
@@ -64,11 +65,12 @@ function MyRequestScreen() {
       }));
       setRequestStateInfo(data);
     } catch (error) {
-      setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось войти, попробуйте позднее.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
@@ -89,7 +91,12 @@ function MyRequestScreen() {
         );
         setMainInfo(mainData);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -99,7 +106,7 @@ function MyRequestScreen() {
   }, [id, accessToken]);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error, navigate]);

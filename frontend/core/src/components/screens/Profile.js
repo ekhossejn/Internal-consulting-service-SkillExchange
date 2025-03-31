@@ -15,6 +15,7 @@ function Profile() {
   const accessToken = userInfo?.access;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
+  const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     skills: [],
     documents: [],
@@ -32,7 +33,12 @@ function Profile() {
         });
         setMainInfo(mainData);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -42,7 +48,7 @@ function Profile() {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
@@ -52,7 +58,22 @@ function Profile() {
       {loading ? (
         <Loader />
       ) : error ? (
-        <Message variant="danger">{error}</Message>
+        <div style={{ height: "100%" }}>
+          <Message
+            variant="danger"
+            style={{
+              textAlign: "center",
+              fontSize: "1.5rem",
+              fontWeight: "bold",
+              padding: "20px",
+              borderRadius: "10px",
+              width: "50vw",
+              marginTop: "45vh",
+            }}
+          >
+            {error}
+          </Message>
+        </div>
       ) : (
         <div
           style={{
@@ -112,7 +133,14 @@ function Profile() {
                 ))}
               </div>
             </Card>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "2vw", width: "90%"}}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "2vw",
+                width: "90%",
+              }}
+            >
               {mainInfo.documents.map((document) => (
                 <div
                   key={document.id}

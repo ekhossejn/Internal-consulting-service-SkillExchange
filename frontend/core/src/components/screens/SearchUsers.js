@@ -19,6 +19,7 @@ function SearchUsers() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [inputSkills, setInputSkills] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [status, setStatus] = useState(200);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -59,7 +60,12 @@ function SearchUsers() {
           setShownUsers(data);
         }
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -79,7 +85,12 @@ function SearchUsers() {
         });
         setSkills(data);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -89,7 +100,7 @@ function SearchUsers() {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);

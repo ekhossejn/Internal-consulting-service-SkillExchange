@@ -16,6 +16,7 @@ function UserScreen({ params }) {
   const accessToken = userInfo?.access;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
+  const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     skills: [],
     documents: [],
@@ -34,7 +35,12 @@ function UserScreen({ params }) {
         });
         setMainInfo(mainData);
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось войти, попробуйте позднее.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -44,7 +50,7 @@ function UserScreen({ params }) {
   }, []);
 
   useEffect(() => {
-    if (error) {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
@@ -59,7 +65,7 @@ function UserScreen({ params }) {
         <div
           style={{
             display: "flex",
-            marginTop: "2vh"
+            marginTop: "2vh",
           }}
         >
           <div
@@ -114,7 +120,11 @@ function UserScreen({ params }) {
             </div>
             <Card
               className="my-3 p-3 rounded"
-              style={{ backgroundColor: "var(--bs-light)", width: "90%", minHeight: "8vh"  }}
+              style={{
+                backgroundColor: "var(--bs-light)",
+                width: "90%",
+                minHeight: "8vh",
+              }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 {mainInfo.skills.map((skill) => (
@@ -122,7 +132,14 @@ function UserScreen({ params }) {
                 ))}
               </div>
             </Card>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "2vh", width: "90%"}}>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "2vh",
+                width: "90%",
+              }}
+            >
               {mainInfo.documents.map((document) => (
                 <div
                   key={document.id}
@@ -136,7 +153,7 @@ function UserScreen({ params }) {
           <div
             style={{
               flex: 1,
-              alignItems: 'center',
+              alignItems: "center",
             }}
           >
             {mainInfo.reviews.map((review) => (
