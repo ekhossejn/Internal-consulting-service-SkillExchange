@@ -23,7 +23,8 @@ function SearchRequests() {
   
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
 
   const handleChange = (selectedOptions) => {
     setInputSkills(
@@ -35,30 +36,74 @@ function SearchRequests() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        if (selectedSkills.length == 0) {
+        try {
+          if (selectedSkills.length == 0) {
+            const { data } = await axios.post(
+              `/search/requests/get/`,
+              { filter_rating: ratingFilter },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            setRequests(data);
+            setShownRequests(data);
+          } else {
+            const { data } = await axios.post(
+              `/search/requests/get/`,
+              { filter_rating: ratingFilter, filter_skills: selectedSkills },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            setRequests(data);
+            setShownRequests(data);
+          }
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
           const { data } = await axios.post(
-            `/search/requests/get/`,
-            { filter_rating: ratingFilter },
+            "api/token/refresh/",
             {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
+              refresh: refreshToken,
+            },
+            config
           );
-          setRequests(data);
-          setShownRequests(data);
-        } else {
-          const { data } = await axios.post(
-            `/search/requests/get/`,
-            { filter_rating: ratingFilter, filter_skills: selectedSkills },
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            }
-          );
-          setRequests(data);
-          setShownRequests(data);
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          if (selectedSkills.length == 0) {
+            const { data } = await axios.post(
+              `/search/requests/get/`,
+              { filter_rating: ratingFilter },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            setRequests(data);
+            setShownRequests(data);
+          } else {
+            const { data } = await axios.post(
+              `/search/requests/get/`,
+              { filter_rating: ratingFilter, filter_skills: selectedSkills },
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+            setRequests(data);
+            setShownRequests(data);
+          }
         }
       } catch (error) {
         if (error.response.status != 401) {
@@ -101,12 +146,37 @@ function SearchRequests() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`/search/skills/get/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setSkills(data);
+        try {
+          const { data } = await axios.get(`/search/skills/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setSkills(data);
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setSkills(skillData);
+        }
       } catch (error) {
         if (error.response.status != 401) {
           setError("Не удалось войти, попробуйте позднее.");

@@ -13,7 +13,8 @@ function UserScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [status, setStatus] = useState(200);
@@ -28,12 +29,37 @@ function UserScreen({ params }) {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data: mainData } = await axios.get(`/search/user/get/${id}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setMainInfo(mainData);
+        try {
+          const { data: mainData } = await axios.get(`/search/user/get/${id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setMainInfo(mainData);
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: mainData } = await axios.get(`/search/user/get/${id}`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setMainInfo(mainData);
+        }
       } catch (error) {
         if (error.response.status != 401) {
           setError("Не удалось войти, попробуйте позднее.");

@@ -20,43 +20,82 @@ function RequestScreen({ params }) {
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [status, setStatus] = useState(200);
   const [mainInfo, setMainInfo] = useState({
     requiredSkills: [],
   });
-  const [respondInfo, setRespondInfo] = useState();
 
   const Respond = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-
-      const {data: email} = await axios.get(
-        `/profile/email/get/`,
-        config
-      );
-
-      if (mainInfo.emails.includes(email)) {
-        setError("Вы уже откликались на этот запрос")
-      } else {
-
-        const { data } = await axios.post(
-          `/search/request/respond/${id}/`,
-          {},
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const {data: email} = await axios.get(
+          `/profile/email/get/`,
           config
         );
+  
+        if (mainInfo.emails.includes(email)) {
+          setError("Вы уже откликались на этот запрос")
+        } else {
+  
+          const { data } = await axios.post(
+            `/search/request/respond/${id}/`,
+            {},
+            config
+          );
+        }
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-        setRespondInfo(data);
+        const checkConfig = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const {data: email} = await axios.get(
+          `/profile/email/get/`,
+          checkConfig
+        );
+  
+        if (mainInfo.emails.includes(email)) {
+          setError("Вы уже откликались на этот запрос")
+        } else {
+  
+          const { data } = await axios.post(
+            `/search/request/respond/${id}/`,
+            {},
+            checkConfig
+          );
+        }
       }
     } catch (error) {
       setError(
@@ -73,15 +112,43 @@ function RequestScreen({ params }) {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data: mainData } = await axios.get(
-          `/search/request/get/${id}/`,
-          {
+        try {
+          const { data: mainData } = await axios.get(
+            `/search/request/get/${id}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setMainInfo(mainData);
+        } catch (error) {
+          const config = {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              "Content-type": "application/json",
             },
-          }
-        );
-        setMainInfo(mainData);
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: mainData } = await axios.get(
+            `/search/request/get/${id}/`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+          setMainInfo(mainData);
+        }
       } catch (error) {
         setError(error.response?.data?.detail || error.message);
       } finally {

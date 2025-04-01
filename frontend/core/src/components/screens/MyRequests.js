@@ -10,12 +10,13 @@ import MyRequest from "../MyRequest";
 function MyRequests() {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
 
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [requests, setRequests] = useState([]);
-  const [deleteInfo, setDeleteInfo] = useState();
+  const [deleteInfo, setDeleteInfo] = useState({});
   const [status, setStatus] = useState(200);
 
   const Delete = async (e, id) => {
@@ -23,21 +24,55 @@ function MyRequests() {
     setLoading(true);
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data } = await axios.post(
+          `/profile/request/delete/${id}/`,
+          {},
+          config
+        );
+  
+        setDeleteInfo(data);
+        window.location.reload();
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-      const { data } = await axios.post(
-        `/profile/request/delete/${id}/`,
-        {},
-        config
-      );
-
-      setDeleteInfo(data);
-      window.location.reload();
+        const deleteConfig = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data: deleteData } = await axios.post(
+          `/profile/request/delete/${id}/`,
+          {},
+          deleteConfig
+        );
+  
+        setDeleteInfo(deleteData);
+        window.location.reload();
+      }
     } catch (error) {
       if (error.response.status != 401) {
         setError("Не удалось войти, попробуйте позднее.");
@@ -54,12 +89,37 @@ function MyRequests() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`/profile/requests/get/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setRequests(data);
+        try {
+          const { data } = await axios.get(`/profile/requests/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setRequests(data);
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const {data: requestData } = await axios.get(`/profile/requests/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setRequests(requestData);
+        }
       } catch (error) {
         if (error.response.status != 401) {
           setError("Не удалось войти, попробуйте позднее.");
