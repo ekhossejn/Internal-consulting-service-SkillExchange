@@ -19,7 +19,7 @@ function MakeRequest() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
-  const [makeInfo, setMakeInfo] = useState();
+  const [makeInfo, setMakeInfo] = useState({});
   const [name, setName] = useState("");
   const [text, setText] = useState("");
   const [allSkills, setAllSkills] = useState([]);
@@ -27,7 +27,8 @@ function MakeRequest() {
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
 
   const handleChange = (selectedOptions) => {
     setSkills(selectedOptions ? selectedOptions.map((opt) => opt.value) : []);
@@ -37,12 +38,36 @@ function MakeRequest() {
     const fetchAllSkills = async () => {
       setLoading(true);
       try {
-        const { data } = await axios.get(`/search/skills/get/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setAllSkills(data);
+        try {
+          const {data:  skillData } = await axios.get(`/search/skills/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setAllSkills(skillData);
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+          const {data:  skillData } = await axios.get(`/search/skills/get/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setAllSkills(skillData);
+        }
       } catch (error) {
         setError(error.response?.data?.detail || error.message);
       } finally {
@@ -61,7 +86,7 @@ function MakeRequest() {
       setMessage(error);
     }
 
-    if (makeInfo) {
+    if (makeInfo && Object.keys(makeInfo).length > 0) {
       navigate("/profile/requests");
     }
   }, [error, makeInfo]);
@@ -71,24 +96,60 @@ function MakeRequest() {
     setLoading(true);
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
 
-      const { data } = await axios.put(
-        `/profile/request/create/`,
-        {
-          name: name,
-          text: text,
-          requiredSkills: skills,
-        },
-        config
-      );
+        const { data: sendData } = await axios.put(
+          `/profile/request/create/`,
+          {
+            name: name,
+            text: text,
+            requiredSkills: skills,
+          },
+          config
+        );
 
-      setMakeInfo(data);
+        setMakeInfo(sendData);
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
+        const configToken = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+
+        const {data:  sendData } = await axios.put(
+          `/profile/request/create/`,
+          {
+            name: name,
+            text: text,
+            requiredSkills: skills,
+          },
+          configToken
+        );
+
+        setMakeInfo(sendData);
+      }
     } catch (error) {
       setError(
         error.response && error.response.data.detail

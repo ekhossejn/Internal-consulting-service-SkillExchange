@@ -19,14 +19,15 @@ function MakeReview({ params }) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
-  const [makeInfo, setMakeInfo] = useState();
+  const [makeInfo, setMakeInfo] = useState({});
   const [text, setText] = useState("");
   const [rating, setRating] = useState("");
   const skills = useState([]);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
 
   useEffect(() => {
     if (error) {
@@ -36,7 +37,7 @@ function MakeReview({ params }) {
       setMessage(error);
     }
 
-    if (makeInfo) {
+    if (makeInfo && Object.keys(makeInfo).length > 0) {
       navigate(`/search/users/${id}/`);
     }
   }, [error, makeInfo]);
@@ -46,23 +47,58 @@ function MakeReview({ params }) {
     setLoading(true);
 
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-
-      const { data } = await axios.put(
-        `/search/user/${id}/review/create/`,
-        {
-          text: text,
-          rating: rating
-        },
-        config
-      );
-
-      setMakeInfo(data);
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data: sendData } = await axios.put(
+          `/search/user/${id}/review/create/`,
+          {
+            text: text,
+            rating: rating
+          },
+          config
+        );
+  
+        setMakeInfo(sendData);
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
+        const sendConfig = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data: sendData } = await axios.put(
+          `/search/user/${id}/review/create/`,
+          {
+            text: text,
+            rating: rating
+          },
+          sendConfig
+        );
+  
+        setMakeInfo(sendData);
+      }
     } catch (error) {
       setError(
         error.response && error.response.data.detail

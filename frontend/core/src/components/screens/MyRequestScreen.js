@@ -27,7 +27,8 @@ function MyRequestScreen() {
   const { id } = useParams();
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(200);
@@ -40,30 +41,64 @@ function MyRequestScreen() {
     createdAt: "",
     isActive: false,
   });
-  const [requestStateInfo, setRequestStateInfo] = useState(null);
 
   const ChangeRequestState = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data } = await axios.post(
+          `/profile/request/${id}/active/change/`,
+          {},
+          config
+        );
+  
+        setMainInfo((prevState) => ({
+          ...prevState,
+          isActive: data.isActive,
+        }));
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-      const { data } = await axios.post(
-        `/profile/request/${id}/active/change/`,
-        {},
-        config
-      );
-
-      setMainInfo((prevState) => ({
-        ...prevState,
-        isActive: data.isActive,
-      }));
-      setRequestStateInfo(data);
+        const changeConfig = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+  
+        const { data: changeData } = await axios.post(
+          `/profile/request/${id}/active/change/`,
+          {},
+          changeConfig
+        );
+  
+        setMainInfo((prevState) => ({
+          ...prevState,
+          isActive: changeData.isActive,
+        }));
+      }
     } catch (error) {
       if (error.response.status != 401) {
         setError("Не удалось войти, попробуйте позднее.");
@@ -80,16 +115,45 @@ function MyRequestScreen() {
     const fetchRequests = async () => {
       setLoading(true);
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        };
-        const { data: mainData } = await axios.get(
-          `/profile/request/get/${id}/`,
-          config
-        );
-        setMainInfo(mainData);
+        try {
+          const config = {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+          const { data: mainData } = await axios.get(
+            `/profile/request/get/${id}/`,
+            config
+          );
+          setMainInfo(mainData);
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const mainDataConfig = {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          };
+          const { data: mainData } = await axios.get(
+            `/profile/request/get/${id}/`,
+            mainDataConfig
+          );
+          setMainInfo(mainData);
+        }
       } catch (error) {
         if (error.response.status != 401) {
           setError("Не удалось войти, попробуйте позднее.");
