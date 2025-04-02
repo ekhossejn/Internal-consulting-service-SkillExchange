@@ -82,7 +82,7 @@ function Settings() {
         }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось загрузить страницу, попробуйте позднее.");
+          setError("Не удалось загрузить страницу, попробуйте позже.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -133,7 +133,7 @@ function Settings() {
         }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось загрузить страницу, попробуйте позднее.");
+          setError("Не удалось загрузить страницу, попробуйте позже.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -204,7 +204,7 @@ function Settings() {
         }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось обновить фото, попробуйте позднее.");
+          setError("Не удалось обновить фото, попробуйте позже.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -277,7 +277,7 @@ function Settings() {
       }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось обновить имя, попробуйте позднее.");
+        setError("Не удалось обновить имя, попробуйте позже.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -340,7 +340,7 @@ function Settings() {
       }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось обновить скиллы, попробуйте позднее.");
+        setError("Не удалось обновить скиллы, попробуйте позже.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -414,7 +414,7 @@ function Settings() {
       }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось удалить документ, попробуйте позднее.");
+        setError("Не удалось удалить документ, попробуйте позже.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -490,7 +490,7 @@ function Settings() {
       }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось загрузить документ, попробуйте позднее.");
+        setError("Не удалось загрузить документ, попробуйте позже.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");

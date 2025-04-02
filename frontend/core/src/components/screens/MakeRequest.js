@@ -16,7 +16,6 @@ import {
 } from "react-bootstrap";
 
 function MakeRequest() {
-  const [message, setMessage] = useState("");
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [makeInfo, setMakeInfo] = useState({});
@@ -24,6 +23,7 @@ function MakeRequest() {
   const [text, setText] = useState("");
   const [allSkills, setAllSkills] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [status, setStatus] = useState(200);
 
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -69,7 +69,12 @@ function MakeRequest() {
           setAllSkills(skillData);
         }
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось загрузить страницу, попробуйте позже.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -79,11 +84,8 @@ function MakeRequest() {
   }, []);
 
   useEffect(() => {
-    if (error) {
-      if (error === "Given token not valid for any token type") {
-        navigate("/login");
-      }
-      setMessage(error);
+    if (error && status == 401) {
+      navigate("/login");
     }
 
     if (makeInfo && Object.keys(makeInfo).length > 0) {
@@ -151,11 +153,12 @@ function MakeRequest() {
         setMakeInfo(sendData);
       }
     } catch (error) {
-      setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось создать запрос, попробуйте позже.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
