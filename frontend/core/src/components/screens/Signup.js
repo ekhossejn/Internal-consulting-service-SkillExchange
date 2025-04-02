@@ -57,7 +57,7 @@ function Signup() {
       setUserInfo(data);
     } catch (error) {
       setError(
-        "Не удалось зарегистрироваться, попробуйте позднее."
+        "Не удалось зарегистрироваться, попробуйте позже."
       );
     } finally {
       setLoading(false);

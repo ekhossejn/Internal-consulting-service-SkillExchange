@@ -51,7 +51,7 @@ function Company() {
         }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось войти, попробуйте позднее.");
+          setError("Не удалось загрузить страницу, попробуйте позже.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");

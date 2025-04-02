@@ -98,11 +98,12 @@ function RequestScreen({ params }) {
         }
       }
     } catch (error) {
-      setError(
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message
-      );
+      if (error.response.status != 401) {
+        setError("Не удалось откликнуться на этот запрос, попробуйте позже.");
+      } else {
+        setStatus(401);
+        setError("Ошибка. Не авторизованный пользователь.");
+      }
     } finally {
       setLoading(false);
     }
@@ -150,7 +151,12 @@ function RequestScreen({ params }) {
           setMainInfo(mainData);
         }
       } catch (error) {
-        setError(error.response?.data?.detail || error.message);
+        if (error.response.status != 401) {
+          setError("Не удалось загрузить страницу, попробуйте позже.");
+        } else {
+          setStatus(401);
+          setError("Ошибка. Не авторизованный пользователь.");
+        }
       } finally {
         setLoading(false);
       }
@@ -160,7 +166,7 @@ function RequestScreen({ params }) {
   }, []);
 
   useEffect(() => {
-    if (error && error != "Вы уже откликались на этот запрос") {
+    if (error && status == 401) {
       navigate("/login");
     }
   }, [error]);
