@@ -37,7 +37,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     image = models.ImageField(default='avatars/default.jpg', upload_to=path_and_rename)
-    name = models.CharField(max_length=20, null=True)
+    name = models.CharField(max_length=255, null=True)
     rating = models.FloatField(default=0)
     rating_sum = models.IntegerField(default=0)
     rating_count = models.IntegerField(default=0)
