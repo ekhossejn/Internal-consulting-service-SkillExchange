@@ -10,7 +10,8 @@ import Select from "react-select";
 function Settings() {
   const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-  const accessToken = userInfo?.access;
+  const [accessToken, setAccessToken] = useState(userInfo?.access);
+  const refreshToken = userInfo?.refresh;
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [availableSkills, setAvailableSkills] = useState([]);
@@ -26,30 +27,62 @@ function Settings() {
   const [name, setName] = useState("");
   const [isUpdatingName, setIsUpdatingName] = useState(false);
 
-  const [selectedDocument, setSelectedDocument] = useState(null); // Для модального окна документа
-  const [docModalOpen, setDocModalOpen] = useState(false); // Состояние открытия модального окна
+  const [selectedDocument, setSelectedDocument] = useState(null);
+  const [docModalOpen, setDocModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const { data: mainData } = await axios.get(`/profile/`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setMainInfo(mainData);
-        setName(mainData.name);
-        setSelectedSkills(
-          mainData.skills.map((skill) => ({
-            value: skill.id,
-            label: skill.name,
-          }))
-        );
+        try {
+          const { data: mainData } = await axios.get(`/profile/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setMainInfo(mainData);
+          setName(mainData.name);
+          setSelectedSkills(
+            mainData.skills.map((skill) => ({
+              value: skill.id,
+              label: skill.name,
+            }))
+          );
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: mainData } = await axios.get(`/profile/`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setMainInfo(mainData);
+          setName(mainData.name);
+          setSelectedSkills(
+            mainData.skills.map((skill) => ({
+              value: skill.id,
+              label: skill.name,
+            }))
+          );
+        }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось войти, попробуйте позднее.");
+          setError("Не удалось загрузить страницу, попробуйте позднее.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -61,18 +94,46 @@ function Settings() {
 
     const fetchAvailableSkills = async () => {
       try {
-        const { data } = await axios.get(`/search/skills/get/`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
-        setAvailableSkills(
-          data.map((skill) => ({
-            value: skill.id,
-            label: skill.name,
-          }))
-        );
+        try {
+          const { data } = await axios.get(`/search/skills/get/`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          setAvailableSkills(
+            data.map((skill) => ({
+              value: skill.id,
+              label: skill.name,
+            }))
+          );
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          setAvailableSkills(
+            skillData.map((skill) => ({
+              value: skill.id,
+              label: skill.name,
+            }))
+          );
+        }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось войти, попробуйте позднее.");
+          setError("Не удалось загрузить страницу, попробуйте позднее.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -82,7 +143,7 @@ function Settings() {
 
     fetchProfile();
     fetchAvailableSkills();
-  }, [accessToken]);
+  }, []);
 
   useEffect(() => {
     if (error && status == 401) {
@@ -100,21 +161,50 @@ function Settings() {
       const formData = new FormData();
       formData.append("image", file);
 
+      setLoading(true);
       try {
-        setLoading(true);
-        const { data } = await axios.post("/profile/update/", formData, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
-        setMainInfo((prev) => ({
-          ...prev,
-          image: data.image,
-        }));
+        try {
+          const { data } = await axios.post("/profile/update/", formData, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+  
+          setMainInfo((prev) => ({
+            ...prev,
+            image: data.image,
+          }));
+        } catch (error) {
+          const config = {
+            headers: {
+              "Content-type": "application/json",
+            },
+          };
+          const { data } = await axios.post(
+            "api/token/refresh/",
+            {
+              refresh: refreshToken,
+            },
+            config
+          );
+          userInfo.Access = data;
+          localStorage.setItem("userInfo", JSON.stringify(userInfo));
+          setAccessToken(data);
+  
+          const { data: updateData } = await axios.post("/profile/update/", formData, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+  
+          setMainInfo((prev) => ({
+            ...prev,
+            image: updateData.image,
+          }));
+        }
       } catch (error) {
         if (error.response.status != 401) {
-          setError("Не удалось войти, попробуйте позднее.");
+          setError("Не удалось обновить фото, попробуйте позднее.");
         } else {
           setStatus(401);
           setError("Ошибка. Не авторизованный пользователь.");
@@ -134,26 +224,60 @@ function Settings() {
       alert("Имя не может быть пустым!");
       return;
     }
+    setLoading(true);
     try {
-      setLoading(true);
-      setIsUpdatingName(true);
-      const { data } = await axios.post(
-        "/profile/update/",
-        { name },
-        {
+      try {
+        setIsUpdatingName(true);
+        const { data } = await axios.post(
+          "/profile/update/",
+          { name },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        setMainInfo((prev) => ({
+          ...prev,
+          name: data.name,
+        }));
+      } catch (error) {
+        const config = {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            "Content-type": "application/json",
           },
-        }
-      );
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-      setMainInfo((prev) => ({
-        ...prev,
-        name: data.name,
-      }));
+        setIsUpdatingName(true);
+        const { data: updateData } = await axios.post(
+          "/profile/update/",
+          { name },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        setMainInfo((prev) => ({
+          ...prev,
+          name: updateData .name,
+        }));
+      }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось войти, попробуйте позднее.");
+        setError("Не удалось обновить имя, попробуйте позднее.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -165,25 +289,58 @@ function Settings() {
   };
 
   const handleSkillsSave = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const { data } = await axios.post(
-        "/profile/update/",
-        { skills: selectedSkills.map((skill) => skill.value) },
-        {
+      try {
+        const { data } = await axios.post(
+          "/profile/update/",
+          { skills: selectedSkills.map((skill) => skill.value) },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        setMainInfo((prev) => ({
+          ...prev,
+          skills: data.skills,
+        }));
+      } catch (error) {
+        const config = {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            "Content-type": "application/json",
           },
-        }
-      );
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-      setMainInfo((prev) => ({
-        ...prev,
-        skills: data.skills,
-      }));
+        const { data: updateData } = await axios.post(
+          "/profile/update/",
+          { skills: selectedSkills.map((skill) => skill.value) },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+  
+        setMainInfo((prev) => ({
+          ...prev,
+          skills: updateData.skills,
+        }));
+      }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось войти, попробуйте позднее.");
+        setError("Не удалось обновить скиллы, попробуйте позднее.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -199,28 +356,65 @@ function Settings() {
   };
 
   const handleDocumentDelete = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      await axios.post(
-        `profile/document/${selectedDocument.id}/delete/`,
-        {},
-        {
+
+      try {
+        await axios.post(
+          `profile/document/${selectedDocument.id}/delete/`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setMainInfo((prevState) => ({
+          ...prevState,
+          documents: prevState.documents.filter(
+            (doc) => doc.id !== selectedDocument.id
+          ),
+        }));
+        setSelectedDocument(null);
+        setDocModalOpen(false);
+      } catch (error) {
+        const config = {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            "Content-type": "application/json",
           },
-        }
-      );
-      setMainInfo((prevState) => ({
-        ...prevState,
-        documents: prevState.documents.filter(
-          (doc) => doc.id !== selectedDocument.id
-        ),
-      }));
-      setSelectedDocument(null);
-      setDocModalOpen(false);
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
+
+        await axios.post(
+          `profile/document/${selectedDocument.id}/delete/`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        setMainInfo((prevState) => ({
+          ...prevState,
+          documents: prevState.documents.filter(
+            (doc) => doc.id !== selectedDocument.id
+          ),
+        }));
+        setSelectedDocument(null);
+        setDocModalOpen(false);
+      }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось войти, попробуйте позднее.");
+        setError("Не удалось удалить документ, попробуйте позднее.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -245,27 +439,58 @@ function Settings() {
 
     const formData = new FormData();
     formData.append("image", selectedFile);
-
+    setLoading(true);
     try {
-      setLoading(true);
-      const response = await axios.put("/profile/document/upload/", formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      try {
+        const response = await axios.put("/profile/document/upload/", formData, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const uploadedDocument = response.data;
+  
+        console.log("Uploaded document:", uploadedDocument);
+        setMainInfo((prevMainInfo) => ({
+          ...prevMainInfo,
+          documents: [...prevMainInfo.documents, uploadedDocument],
+        }));
+  
+        setSelectedFile(null);
+      } catch (error) {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+          },
+        };
+        const { data } = await axios.post(
+          "api/token/refresh/",
+          {
+            refresh: refreshToken,
+          },
+          config
+        );
+        userInfo.Access = data;
+        localStorage.setItem("userInfo", JSON.stringify(userInfo));
+        setAccessToken(data);
 
-      const uploadedDocument = response.data;
-
-      console.log("Uploaded document:", uploadedDocument);
-      setMainInfo((prevMainInfo) => ({
-        ...prevMainInfo,
-        documents: [...prevMainInfo.documents, uploadedDocument],
-      }));
-
-      setSelectedFile(null);
+        const response = await axios.put("/profile/document/upload/", formData, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const uploadedDocument = response.data;
+        setMainInfo((prevMainInfo) => ({
+          ...prevMainInfo,
+          documents: [...prevMainInfo.documents, uploadedDocument],
+        }));
+  
+        setSelectedFile(null);
+      }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось войти, попробуйте позднее.");
+        setError("Не удалось загрузить документ, попробуйте позднее.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -276,7 +501,7 @@ function Settings() {
   };
 
   const removeFile = () => {
-    setSelectedFile(null); // Сбрасываем состояние выбранного файла
+    setSelectedFile(null);
   };
 
   return (
