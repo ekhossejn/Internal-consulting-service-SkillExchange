@@ -55,25 +55,26 @@ class UpdateCustomUserSerializer(serializers.ModelSerializer):
         fields=['name', 'image', 'skills',]
     
 class RequestsSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
+    authorImage = serializers.ImageField(source='author.image')
     emails = serializers.SerializerMethodField()
     requiredSkills = SkillsSerializer(many=True, required=False)
 
     class Meta:
         model=Request
-        fields=['id', 'image', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
-
-    def get_image(self, obj):
-        return obj.author.image.url
+        fields=['id', 'authorImage', 'isActive', 'emails', 'name', 'createdAt', 'requiredSkills', 'text']
 
     def get_emails(self, obj):
         return obj.respondedUsers.values_list('email', flat=True)
 
 class RequestsShortInfoSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField(source='author.image')
+    authorImage = serializers.ImageField(source='author.image')
+    authorRating = serializers.SerializerMethodField()
     class Meta:
         model=Request
-        fields=['id', 'image', 'name', 'text', 'createdAt', 'isActive']
+        fields=['id', 'authorImage', 'authorRating', 'name', 'text', 'createdAt', 'isActive']
+
+    def get_authorRating(self, obj):
+        return round(obj.author.rating, 2)
 
 class DocumentsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,6 +82,7 @@ class DocumentsSerializer(serializers.ModelSerializer):
         fields='__all__'
 
 class ReviewsSerializer(serializers.ModelSerializer):
+    reviewer_name = serializers.CharField(source='reviewer.name', read_only=True)
     class Meta:
         model=Review
-        fields='__all__'
+        fields=['rating', 'createdAt', 'reviewer_name', 'text']
