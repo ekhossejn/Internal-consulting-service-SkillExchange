@@ -85,4 +85,4 @@ class ReviewsSerializer(serializers.ModelSerializer):
     reviewer_name = serializers.CharField(source='reviewer.name', read_only=True)
     class Meta:
         model=Review
-        fields=['rating', 'createdAt', 'reviewer_name', 'text']
+        fields=['rating', 'createdAt', 'reviewer_name', 'reviewer', 'reviewee', 'text']

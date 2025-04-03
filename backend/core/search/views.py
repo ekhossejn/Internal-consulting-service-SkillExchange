@@ -16,7 +16,7 @@ def users_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
 
-    users = CustomUser.objects.exclude(id=request.user.id)
+    users = CustomUser.objects.exclude(id=request.user.id).filter(company__id=request.user.company.id)
 
     if filter_skills != None: 
         if isinstance(filter_skills, list):
@@ -42,6 +42,8 @@ def user_get(request, _id):
         return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
     if request.user.id == user_obj.id:
         return Response({"detail": "Пользователь с таким id не доступен, так как он не может просматривать сам себя."}, status=status.HTTP_403_FORBIDDEN)
+    if request.user.company.id != user_obj.company.id:
+        return Response({"detail": "Пользователь с таким id не доступен, так как его корпоративная почта принадлежит другой организации."}, status=status.HTTP_403_FORBIDDEN)
     serializer = CustomUserSerializer(user_obj)
     return Response(serializer.data)
 
@@ -50,7 +52,7 @@ def requests_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
 
-    requests = Request.objects.filter(isActive=True).exclude(author=request.user).select_related('author')
+    requests = Request.objects.filter(isActive=True).exclude(author=request.user).select_related('author').filter(author__company__id=request.user.company.id)
     if filter_skills != None: 
         if isinstance(filter_skills, list):
             requests = requests.filter(requiredSkills__id__in=filter_skills).distinct()
@@ -59,7 +61,7 @@ def requests_get(request):
     if filter_rating != None and filter_rating > 0: 
         try:
             filter_rating = float(filter_rating)
-            requests = requests.select_related('author').filter(author__rating__gte=filter_rating)
+            requests = requests.filter(author__rating__gte=filter_rating)
         except:
             return Response({"error": "filter_rating must be a number."}, status=status.HTTP_400_BAD_REQUEST)
     serializer = RequestsShortInfoSerializer(requests, many=True)
@@ -73,7 +75,9 @@ def request_get(request, _id):
     except Request.DoesNotExist:
         return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
     if request.user.id == request_obj.author.id:
-        return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_403_FORBIDDEN)
+    if request.user.company.id != request_obj.author.company.id:
+        return Response({"detail": "Запрос с таким id не доступен так как почта его автора принадлежит другой организации."}, status=status.HTTP_403_FORBIDDEN)
     if request_obj.isActive == False:
         return Response({"detail": "Запрос скрыт."}, status=status.HTTP_403_FORBIDDEN)
     serializer = RequestsSerializer(request_obj)
@@ -88,6 +92,8 @@ def request_respond(request, _id):
         return Response({"detail": "Запрос с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
     if request.user.id == request_obj.author.id:
         return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_403_FORBIDDEN)
+    if request.user.company.id != request_obj.author.company.id:
+        return Response({"detail": "Запрос с таким id не доступен так как почта его автора принадлежит другой организации."}, status=status.HTTP_403_FORBIDDEN)
     if not request_obj.isActive:
         return Response({"detail": "Запрос скрыт."}, status=status.HTTP_403_FORBIDDEN)
     
@@ -105,7 +111,9 @@ def review_create(request, _id):
     except CustomUser.DoesNotExist:
         return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_400_BAD_REQUEST)
     if request.user.id == reviewee_obj.id:
-        return Response({"detail": "Пользователь с таким id не доступен так как он не может оставлять отзыв сам себе."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Пользователь с таким id не доступен так как он не может оставлять отзыв сам себе."}, status=status.HTTP_403_FORBIDDEN)
+    if request.user.company.id != reviewee_obj.company.id:
+        return Response({"detail": "Почта пользователя с таким id принадлежит другой организации."}, status=status.HTTP_403_FORBIDDEN)
     review_info = request.data
     review_info['reviewer'] = request.user.id
     review_info['reviewee'] = reviewee_obj.id
