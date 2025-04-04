@@ -144,12 +144,13 @@ function UserScreen({ params }) {
                 </div>
               </div>
             </div>
+            <h3 style={{marginTop: "2vh"}}>Скиллы</h3>
             <Card
               className="my-3 p-3 rounded"
               style={{
                 backgroundColor: "var(--bs-light)",
                 width: "90%",
-                minHeight: "8vh",
+                minHeight: "8vh"
               }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
@@ -158,12 +159,14 @@ function UserScreen({ params }) {
                 ))}
               </div>
             </Card>
+            <h3 style={{marginTop: "2vh"}}>Документы</h3>
             <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "2vh",
                 width: "90%",
+                marginTop: "2vh"
               }}
             >
               {mainInfo.documents.map((document) => (
