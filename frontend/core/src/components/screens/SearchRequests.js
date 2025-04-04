@@ -138,6 +138,10 @@ function SearchRequests() {
         (a, b) =>
           new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
       );
+    } else if (sortOrder == "higher") {
+      sortedRequests.sort((a, b) => b.authorRating - a.authorRating);
+    } else if (sortOrder == "lower") {
+      sortedRequests.sort((a, b) => a.authorRating - b.authorRating);
     }
     setShownRequests(sortedRequests);
   }, [sortOrder, requests]);
