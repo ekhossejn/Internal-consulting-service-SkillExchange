@@ -1,6 +1,7 @@
 import React from "react";
 import { Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import Skill from "./Skill";
 
 function User({ user }) {
   const navigate = useNavigate();
