@@ -65,7 +65,7 @@ function Settings() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-  
+
           const { data: mainData } = await axios.get(`/profile/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -120,7 +120,7 @@ function Settings() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-  
+
           const { data: skillData } = await axios.get(`/search/skills/get/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
@@ -169,7 +169,7 @@ function Settings() {
               Authorization: `Bearer ${accessToken}`,
             },
           });
-  
+
           setMainInfo((prev) => ({
             ...prev,
             image: data.image,
@@ -190,13 +190,17 @@ function Settings() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-  
-          const { data: updateData } = await axios.post("/profile/update/", formData, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-  
+
+          const { data: updateData } = await axios.post(
+            "/profile/update/",
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            }
+          );
+
           setMainInfo((prev) => ({
             ...prev,
             image: updateData.image,
@@ -237,7 +241,7 @@ function Settings() {
             },
           }
         );
-  
+
         setMainInfo((prev) => ({
           ...prev,
           name: data.name,
@@ -269,10 +273,10 @@ function Settings() {
             },
           }
         );
-  
+
         setMainInfo((prev) => ({
           ...prev,
-          name: updateData .name,
+          name: updateData.name,
         }));
       }
     } catch (error) {
@@ -301,7 +305,7 @@ function Settings() {
             },
           }
         );
-  
+
         setMainInfo((prev) => ({
           ...prev,
           skills: data.skills,
@@ -332,7 +336,7 @@ function Settings() {
             },
           }
         );
-  
+
         setMainInfo((prev) => ({
           ...prev,
           skills: updateData.skills,
@@ -358,7 +362,6 @@ function Settings() {
   const handleDocumentDelete = async () => {
     setLoading(true);
     try {
-
       try {
         await axios.post(
           `profile/document/${selectedDocument.id}/delete/`,
@@ -442,20 +445,24 @@ function Settings() {
     setLoading(true);
     try {
       try {
-        const response = await axios.put("/profile/document/upload/", formData, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-  
+        const response = await axios.put(
+          "/profile/document/upload/",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
         const uploadedDocument = response.data;
-  
+
         console.log("Uploaded document:", uploadedDocument);
         setMainInfo((prevMainInfo) => ({
           ...prevMainInfo,
           documents: [...prevMainInfo.documents, uploadedDocument],
         }));
-  
+
         setSelectedFile(null);
       } catch (error) {
         const config = {
@@ -474,23 +481,27 @@ function Settings() {
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         setAccessToken(data);
 
-        const response = await axios.put("/profile/document/upload/", formData, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-  
+        const response = await axios.put(
+          "/profile/document/upload/",
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
         const uploadedDocument = response.data;
         setMainInfo((prevMainInfo) => ({
           ...prevMainInfo,
           documents: [...prevMainInfo.documents, uploadedDocument],
         }));
-  
+
         setSelectedFile(null);
       }
     } catch (error) {
       if (error.response.status != 401) {
-        setError("Не удалось загрузить документ, попробуйте позже.");
+        setError("Не удалось загрузить документ, попробуйте позднее.");
       } else {
         setStatus(401);
         setError("Ошибка. Не авторизованный пользователь.");
@@ -683,43 +694,33 @@ function Settings() {
               </Col>
             </Row>
 
-            <Row className="g-4 justify-content-start mt-3">
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "2vw",
+                width: "90%",
+              }}
+            >
               {mainInfo.documents.map((document) => (
-                <Col key={document.id} sm={12} md={6} lg={4} xl={3}>
-                  <Card
-                    className="p-2 shadow-sm border-0 hover-card"
+                <div
+                  key={document.id}
+                  style={{ flex: "0 0 150px", maxWidth: "200px" }}
+                >
+                  <img
+                    src={document.image}
+                    alt="Profile"
                     style={{
-                      borderRadius: "15px",
+                      width: "150px",
+                      height: "150px",
+                      objectFit: "cover",
                       cursor: "pointer",
-                      transition: "transform 0.3s, box-shadow 0.3s",
-                      backgroundColor: "#f9f9f9",
                     }}
                     onClick={() => handleDocumentOpen(document)}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.05)";
-                      e.currentTarget.style.boxShadow =
-                        "0 4px 15px rgba(0,0,0,0.2)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                      e.currentTarget.style.boxShadow =
-                        "0 2px 8px rgba(0,0,0,0.1)";
-                    }}
-                  >
-                    <Card.Img
-                      variant="top"
-                      src={document.image}
-                      style={{
-                        height: "200px",
-                        width: "100%",
-                        objectFit: "cover",
-                        borderRadius: "12px 12px 0 0",
-                      }}
-                    />
-                  </Card>
-                </Col>
+                  />
+                </div>
               ))}
-            </Row>
+            </div>
           </div>
         </div>
       )}
