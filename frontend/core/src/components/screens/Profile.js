@@ -145,6 +145,7 @@ function Profile() {
                 <h2 style={{ marginLeft: "10vw" }}>{mainInfo.rating}</h2>
               </div>
             </div>
+            <h3 style={{marginTop: "2vh"}}>Скиллы</h3>
             <Card
               className="my-3 p-3 rounded"
               style={{
@@ -159,12 +160,14 @@ function Profile() {
                 ))}
               </div>
             </Card>
+            <h3 style={{marginTop: "2vh"}}>Документы</h3>
             <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "2vw",
                 width: "90%",
+                marginTop: "2vh"
               }}
             >
               {mainInfo.documents.map((document) => (
