@@ -200,7 +200,7 @@ function RequestScreen({ params }) {
               }}
             >
               <img
-                src={mainInfo.image}
+                src={mainInfo.authorImage}
                 alt="Profile"
                 style={{
                   width: "100%",
