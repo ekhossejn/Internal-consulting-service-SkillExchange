@@ -39,7 +39,7 @@ function Request({ request }) {
               }}
             >
               <img
-                src={request.image}
+                src={request.authorImage}
                 alt="Profile"
                 style={{
                   width: "100%",
