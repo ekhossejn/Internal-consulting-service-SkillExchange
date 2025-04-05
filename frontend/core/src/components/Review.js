@@ -28,7 +28,7 @@ function Review({ review }) {
         </div>
       </Card.Header>
       <Card.Body>
-        <Card.Text style={{ fontSize: "2.5vh" }}>{review.text}</Card.Text>
+        <Card.Text style={{ fontSize: "2vh" }}>{review.text}</Card.Text>
       </Card.Body>
     </Card>
   );

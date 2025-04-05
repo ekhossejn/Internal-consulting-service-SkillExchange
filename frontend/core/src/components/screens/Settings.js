@@ -700,6 +700,7 @@ function Settings() {
                 flexWrap: "wrap",
                 gap: "2vw",
                 width: "90%",
+                marginTop: "2vh"
               }}
             >
               {mainInfo.documents.map((document) => (
