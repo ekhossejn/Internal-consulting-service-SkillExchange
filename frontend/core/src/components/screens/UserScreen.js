@@ -113,8 +113,8 @@ function UserScreen({ params }) {
             >
               <div
                 style={{
-                  width: "min(30vh, 30vw)",
-                  height: "min(30vh, 30vw)",
+                  width: "30vh",
+                  height: "30vh",
                   borderRadius: "50%",
                   overflow: "hidden",
                   border: "3px solid var(--secondary-color)",
@@ -133,8 +133,16 @@ function UserScreen({ params }) {
                   }}
                 ></img>
               </div>
-              <div>
-                <h1>{mainInfo.name}</h1>
+              <div style={{ width: "30vw" }}>
+                <h1
+                  style={{
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  {mainInfo.name}
+                </h1>
                 <svg
                   width="10vh"
                   height="10vh"
@@ -176,11 +184,9 @@ function UserScreen({ params }) {
                         marginTop: "1.5vh",
                         cursor: "pointer",
                         transition: "opacity 0.3s",
-        opacity: copied ? 0.4 : 1,
+                        opacity: copied ? 0.4 : 1,
                       }}
-                      onClick={
-                        handleCopy
-                      }
+                      onClick={handleCopy}
                     >
                       {mainInfo.email}
                     </p>
