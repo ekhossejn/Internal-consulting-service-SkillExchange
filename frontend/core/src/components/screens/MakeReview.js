@@ -20,7 +20,11 @@ function MakeReview({ params }) {
   const [loading, setLoading] = useState();
   const [makeInfo, setMakeInfo] = useState({});
   const [text, setText] = useState("");
+  const [textError, setTextError] = useState(
+    "Текст отзыва должен быть не пустым"
+  );
   const [rating, setRating] = useState("");
+  const [ratingError, setRatingError] = useState("Выберите оценку");
   const skills = useState([]);
   const [status, setStatus] = useState(200);
 
@@ -51,16 +55,16 @@ function MakeReview({ params }) {
             Authorization: `Bearer ${accessToken}`,
           },
         };
-  
+
         const { data: sendData } = await axios.put(
           `/search/user/${id}/review/create/`,
           {
             text: text,
-            rating: rating
+            rating: rating,
           },
           config
         );
-  
+
         setMakeInfo(sendData);
       } catch (error) {
         const config = {
@@ -84,16 +88,16 @@ function MakeReview({ params }) {
             Authorization: `Bearer ${accessToken}`,
           },
         };
-  
+
         const { data: sendData } = await axios.put(
           `/search/user/${id}/review/create/`,
           {
             text: text,
-            rating: rating
+            rating: rating,
           },
           sendConfig
         );
-  
+
         setMakeInfo(sendData);
       }
     } catch (error) {
@@ -128,15 +132,39 @@ function MakeReview({ params }) {
                         type="text"
                         placeholder=""
                         value={text}
-                        onChange={(e) => setText(e.target.value)}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          setText(input);
+
+                          if (input.length == 0) {
+                            setTextError("Текст должен быть не пустым");
+                          } else if (input.length > 10) {
+                            setTextError("Максимум 100 символов");
+                          } else {
+                            setTextError("");
+                          }
+                        }}
+                        isInvalid={!!textError}
                         required
                       />
+                      <Form.Control.Feedback type="invalid">
+                        {textError}
+                      </Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label>Оценка</Form.Label>
                       <Form.Select
                         value={rating}
-                        onChange={(e) => setRating(e.target.value)}
+                        isInvalid={!!ratingError}
+                        onChange={(e) => {
+                          const input = e.target.value;
+                          setRating(input)
+                          if (input == "") {
+                            setRatingError("Выберите оценку")
+                          } else {
+                            setRatingError("")
+                          }
+                        }}
                         required
                       >
                         <option value=""></option>
@@ -146,10 +174,17 @@ function MakeReview({ params }) {
                           </option>
                         ))}
                       </Form.Select>
+                      <Form.Control.Feedback type="invalid">
+                        {ratingError}
+                      </Form.Control.Feedback>
                     </Form.Group>
                     <br />
                     <div className="d-grid gap-2">
-                      <Button className="btn btn-md btn-success" type="submit">
+                      <Button
+                        className="btn btn-md ${(!!textError || !!ratinError) ? 'btn-disabled' : 'btn-success'}"
+                        type="submit"
+                        disabled={!!textError || !!ratingError}
+                      >
                         {" "}
                         Создать{" "}
                       </Button>
