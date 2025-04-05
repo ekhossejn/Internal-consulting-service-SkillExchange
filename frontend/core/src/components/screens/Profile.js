@@ -120,8 +120,9 @@ function Profile() {
             >
               <div
                 style={{
-                  width: "min(30vh, 30vw)",
-                  height: "min(30vh, 30vw)",
+                  width: "30vh",
+                  height: "30vh",
+                  aspectRatio: "1 / 1",
                   borderRadius: "50%",
                   overflow: "hidden",
                   border: "3px solid var(--secondary-color)",
@@ -140,8 +141,16 @@ function Profile() {
                   }}
                 ></img>
               </div>
-              <div>
-                <h1>{mainInfo.name}</h1>
+              <div style={{ width: "30vw" }}>
+                <h1
+                  style={{
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    whiteSpace: "normal",
+                  }}
+                >
+                  {mainInfo.name}
+                </h1>
                 <svg
                   width="10vh"
                   height="10vh"
@@ -151,7 +160,7 @@ function Profile() {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ display: "block"}}
+                  style={{ display: "block" }}
                 >
                   <polygon
                     points="12 2 15.09 8.26 22 9.27 
