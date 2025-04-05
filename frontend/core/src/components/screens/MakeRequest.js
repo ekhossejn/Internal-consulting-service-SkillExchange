@@ -195,8 +195,8 @@ function MakeRequest() {
 
                         if (input.length == 0) {
                           setNameError("Имя должно быть не пустое");
-                        } else if (input.length > 3000) {
-                          setNameError("Максимум 3000 символов");
+                        } else if (input.length > 100) {
+                          setNameError("Максимум 100 символов");
                         } else {
                           setNameError("");
                         }
@@ -256,8 +256,8 @@ function MakeRequest() {
 
                         if (input.length == 0) {
                           setTextError("Текст должен быть не пустым");
-                        } else if (input.length > 10) {
-                          setTextError("Максимум 100 символов");
+                        } else if (input.length > 3000) {
+                          setTextError("Максимум 3000 символов");
                         } else {
                           setTextError("");
                         }
@@ -266,7 +266,7 @@ function MakeRequest() {
                       required
                       style={{ width: "35vw" }}
                     />
-                                        <Form.Control.Feedback type="invalid">
+                    <Form.Control.Feedback type="invalid">
                       {textError}
                     </Form.Control.Feedback>
                   </Form.Group>
