@@ -18,12 +18,18 @@ function UserScreen({ params }) {
   const [error, setError] = useState();
   const [loading, setLoading] = useState();
   const [status, setStatus] = useState(200);
+  const [copied, setCopied] = useState(false);
   const [mainInfo, setMainInfo] = useState({
     skills: [],
     documents: [],
     reviews: [],
   });
   const [emailVisible, setEmailVisible] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(mainInfo.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 100);
+  };
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -52,7 +58,7 @@ function UserScreen({ params }) {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-  
+
           const { data: mainData } = await axios.get(`/search/user/get/${id}`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -138,7 +144,7 @@ function UserScreen({ params }) {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ display: "block"}}
+                  style={{ display: "block" }}
                 >
                   <polygon
                     points="12 2 15.09 8.26 22 9.27 
@@ -160,9 +166,24 @@ function UserScreen({ params }) {
                     {mainInfo.rating}
                   </text>
                 </svg>
-                <div className="d-grid gap-2" style={{marginTop: "2vh"}}>
+                <div className="d-grid gap-2" style={{ marginTop: "2vh" }}>
                   {emailVisible ? (
-                    <p className="text-success">{mainInfo.email}</p>
+                    <p
+                      className="text-success"
+                      style={{
+                        fontSize: "20px",
+                        marginLeft: "2vw",
+                        marginTop: "1.5vh",
+                        cursor: "pointer",
+                        transition: "opacity 0.3s",
+        opacity: copied ? 0.4 : 1,
+                      }}
+                      onClick={
+                        handleCopy
+                      }
+                    >
+                      {mainInfo.email}
+                    </p>
                   ) : (
                     <Button
                       className="btn btn-md btn-success"
@@ -174,13 +195,13 @@ function UserScreen({ params }) {
                 </div>
               </div>
             </div>
-            <h3 style={{marginTop: "2vh"}}>Скиллы</h3>
+            <h3 style={{ marginTop: "2vh" }}>Скиллы</h3>
             <Card
               className="my-3 p-3 rounded"
               style={{
                 backgroundColor: "var(--bs-light)",
                 width: "90%",
-                minHeight: "8vh"
+                minHeight: "8vh",
               }}
             >
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
@@ -189,14 +210,14 @@ function UserScreen({ params }) {
                 ))}
               </div>
             </Card>
-            <h3 style={{marginTop: "2vh"}}>Документы</h3>
+            <h3 style={{ marginTop: "2vh" }}>Документы</h3>
             <div
               style={{
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "2vh",
                 width: "90%",
-                marginTop: "2vh"
+                marginTop: "2vh",
               }}
             >
               {mainInfo.documents.map((document) => (
