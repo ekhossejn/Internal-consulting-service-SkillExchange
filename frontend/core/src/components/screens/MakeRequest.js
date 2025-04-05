@@ -20,7 +20,9 @@ function MakeRequest() {
   const [loading, setLoading] = useState();
   const [makeInfo, setMakeInfo] = useState({});
   const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("Имя должно быть не пустое");
   const [text, setText] = useState("");
+  const [textError, setTextError] = useState("Текст должен быть не пустым");
   const [allSkills, setAllSkills] = useState([]);
   const [skills, setSkills] = useState([]);
   const [status, setStatus] = useState(200);
@@ -39,7 +41,7 @@ function MakeRequest() {
       setLoading(true);
       try {
         try {
-          const {data:  skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -61,7 +63,7 @@ function MakeRequest() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-          const {data:  skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -140,7 +142,7 @@ function MakeRequest() {
           },
         };
 
-        const {data:  sendData } = await axios.put(
+        const { data: sendData } = await axios.put(
           `/profile/request/create/`,
           {
             name: name,
@@ -187,10 +189,25 @@ function MakeRequest() {
                       type="text"
                       placeholder=""
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setName(input);
+
+                        if (input.length == 0) {
+                          setNameError("Имя должно быть не пустое");
+                        } else if (input.length > 3000) {
+                          setNameError("Максимум 3000 символов");
+                        } else {
+                          setNameError("");
+                        }
+                      }}
+                      isInvalid={!!nameError}
                       required
                       style={{ width: "35vw" }}
                     />
+                    <Form.Control.Feedback type="invalid">
+                      {nameError}
+                    </Form.Control.Feedback>
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Необходимые скиллы</Form.Label>
@@ -233,14 +250,33 @@ function MakeRequest() {
                       type="text"
                       placeholder=""
                       value={text}
-                      onChange={(e) => setText(e.target.value)}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setText(input);
+
+                        if (input.length == 0) {
+                          setTextError("Текст должен быть не пустым");
+                        } else if (input.length > 10) {
+                          setTextError("Максимум 100 символов");
+                        } else {
+                          setTextError("");
+                        }
+                      }}
+                      isInvalid={!!textError}
                       required
                       style={{ width: "35vw" }}
                     />
+                                        <Form.Control.Feedback type="invalid">
+                      {textError}
+                    </Form.Control.Feedback>
                   </Form.Group>
                   <br />
                   <div className="d-grid gap-2">
-                    <Button className="btn btn-md btn-success" type="submit">
+                    <Button
+                      className="btn btn-md ${(!!nameError || !!textError) ? 'btn-disabled' : 'btn-success'}"
+                      type="submit"
+                      disabled={!!nameError || !!textError}
+                    >
                       {" "}
                       Создать{" "}
                     </Button>
