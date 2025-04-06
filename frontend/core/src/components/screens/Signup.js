@@ -52,7 +52,7 @@ function Signup() {
       };
 
       const { data } = await axios.post(
-        "/register/",
+        "/api/register/",
         {
           email: email,
           password: pass1,

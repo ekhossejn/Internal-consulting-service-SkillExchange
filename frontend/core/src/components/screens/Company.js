@@ -20,7 +20,7 @@ function Company() {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(`/profile/company/get/`, {
+          const { data: mainData } = await axios.get(`/api/profile/company/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -42,7 +42,7 @@ function Company() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-          const { data: mainData } = await axios.get(`/profile/company/get/`, {
+          const { data: mainData } = await axios.get(`/api/profile/company/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

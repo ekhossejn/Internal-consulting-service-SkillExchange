@@ -55,7 +55,7 @@ function MyRequestScreen() {
         };
   
         const { data } = await axios.post(
-          `/profile/request/${id}/active/change/`,
+          `/api/profile/request/${id}/active/change/`,
           {},
           config
         );
@@ -71,7 +71,7 @@ function MyRequestScreen() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -89,7 +89,7 @@ function MyRequestScreen() {
         };
   
         const { data: changeData } = await axios.post(
-          `/profile/request/${id}/active/change/`,
+          `/api/profile/request/${id}/active/change/`,
           {},
           changeConfig
         );
@@ -122,7 +122,7 @@ function MyRequestScreen() {
             },
           };
           const { data: mainData } = await axios.get(
-            `/profile/request/get/${id}/`,
+            `/api/profile/request/get/${id}/`,
             config
           );
           setMainInfo(mainData);
@@ -133,7 +133,7 @@ function MyRequestScreen() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -149,7 +149,7 @@ function MyRequestScreen() {
             },
           };
           const { data: mainData } = await axios.get(
-            `/profile/request/get/${id}/`,
+            `/api/profile/request/get/${id}/`,
             mainDataConfig
           );
           setMainInfo(mainData);

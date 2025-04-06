@@ -39,7 +39,7 @@ function SearchRequests() {
         try {
           if (selectedSkills.length == 0) {
             const { data } = await axios.post(
-              `/search/requests/get/`,
+              `/api/search/requests/get/`,
               { filter_rating: ratingFilter },
               {
                 headers: {
@@ -51,7 +51,7 @@ function SearchRequests() {
             setShownRequests(data);
           } else {
             const { data } = await axios.post(
-              `/search/requests/get/`,
+              `/api/search/requests/get/`,
               { filter_rating: ratingFilter, filter_skills: selectedSkills },
               {
                 headers: {
@@ -69,7 +69,7 @@ function SearchRequests() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -81,7 +81,7 @@ function SearchRequests() {
   
           if (selectedSkills.length == 0) {
             const { data } = await axios.post(
-              `/search/requests/get/`,
+              `/api/search/requests/get/`,
               { filter_rating: ratingFilter },
               {
                 headers: {
@@ -93,7 +93,7 @@ function SearchRequests() {
             setShownRequests(data);
           } else {
             const { data } = await axios.post(
-              `/search/requests/get/`,
+              `/api/search/requests/get/`,
               { filter_rating: ratingFilter, filter_skills: selectedSkills },
               {
                 headers: {
@@ -151,7 +151,7 @@ function SearchRequests() {
       setLoading(true);
       try {
         try {
-          const { data } = await axios.get(`/search/skills/get/`, {
+          const { data } = await axios.get(`/api/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -164,7 +164,7 @@ function SearchRequests() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -174,7 +174,7 @@ function SearchRequests() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
   
-          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

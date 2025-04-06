@@ -28,7 +28,7 @@ function Profile() {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(`/profile/`, {
+          const { data: mainData } = await axios.get(`/api/profile/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -41,7 +41,7 @@ function Profile() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -51,7 +51,7 @@ function Profile() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: mainData } = await axios.get(`/profile/`, {
+          const { data: mainData } = await axios.get(`/api/profile/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

@@ -33,7 +33,7 @@ function MyRequests() {
         };
   
         const { data } = await axios.post(
-          `/profile/request/delete/${id}/`,
+          `/api/profile/request/delete/${id}/`,
           {},
           config
         );
@@ -47,7 +47,7 @@ function MyRequests() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -65,7 +65,7 @@ function MyRequests() {
         };
   
         const { data: deleteData } = await axios.post(
-          `/profile/request/delete/${id}/`,
+          `/api/profile/request/delete/${id}/`,
           {},
           deleteConfig
         );
@@ -90,7 +90,7 @@ function MyRequests() {
       setLoading(true);
       try {
         try {
-          const { data } = await axios.get(`/profile/requests/get/`, {
+          const { data } = await axios.get(`/api/profile/requests/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -103,7 +103,7 @@ function MyRequests() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -113,7 +113,7 @@ function MyRequests() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
   
-          const {data: requestData } = await axios.get(`/profile/requests/get/`, {
+          const {data: requestData } = await axios.get(`/api/profile/requests/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
