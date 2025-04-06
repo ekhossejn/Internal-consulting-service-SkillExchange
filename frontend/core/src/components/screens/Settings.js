@@ -36,7 +36,7 @@ function Settings() {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(`/profile/`, {
+          const { data: mainData } = await axios.get(`/api/profile/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -56,7 +56,7 @@ function Settings() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -66,7 +66,7 @@ function Settings() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: mainData } = await axios.get(`/profile/`, {
+          const { data: mainData } = await axios.get(`/api/profile/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -95,7 +95,7 @@ function Settings() {
     const fetchAvailableSkills = async () => {
       try {
         try {
-          const { data } = await axios.get(`/search/skills/get/`, {
+          const { data } = await axios.get(`/api/search/skills/get/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           setAvailableSkills(
@@ -111,7 +111,7 @@ function Settings() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -121,7 +121,7 @@ function Settings() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           setAvailableSkills(
@@ -164,7 +164,7 @@ function Settings() {
       setLoading(true);
       try {
         try {
-          const { data } = await axios.post("/profile/update/", formData, {
+          const { data } = await axios.post("/api/profile/update/", formData, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -181,7 +181,7 @@ function Settings() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -192,7 +192,7 @@ function Settings() {
           setAccessToken(data);
 
           const { data: updateData } = await axios.post(
-            "/profile/update/",
+            "/api/profile/update/",
             formData,
             {
               headers: {
@@ -233,7 +233,7 @@ function Settings() {
       try {
         setIsUpdatingName(true);
         const { data } = await axios.post(
-          "/profile/update/",
+          "/api/profile/update/",
           { name },
           {
             headers: {
@@ -253,7 +253,7 @@ function Settings() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -265,7 +265,7 @@ function Settings() {
 
         setIsUpdatingName(true);
         const { data: updateData } = await axios.post(
-          "/profile/update/",
+          "/api/profile/update/",
           { name },
           {
             headers: {
@@ -297,7 +297,7 @@ function Settings() {
     try {
       try {
         const { data } = await axios.post(
-          "/profile/update/",
+          "/api/profile/update/",
           { skills: selectedSkills.map((skill) => skill.value) },
           {
             headers: {
@@ -317,7 +317,7 @@ function Settings() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -328,7 +328,7 @@ function Settings() {
         setAccessToken(data);
 
         const { data: updateData } = await axios.post(
-          "/profile/update/",
+          "/api/profile/update/",
           { skills: selectedSkills.map((skill) => skill.value) },
           {
             headers: {
@@ -364,7 +364,7 @@ function Settings() {
     try {
       try {
         await axios.post(
-          `profile/document/${selectedDocument.id}/delete/`,
+          `/api/profile/document/${selectedDocument.id}/delete/`,
           {},
           {
             headers: {
@@ -387,7 +387,7 @@ function Settings() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -398,7 +398,7 @@ function Settings() {
         setAccessToken(data);
 
         await axios.post(
-          `profile/document/${selectedDocument.id}/delete/`,
+          `/api/profile/document/${selectedDocument.id}/delete/`,
           {},
           {
             headers: {
@@ -446,7 +446,7 @@ function Settings() {
     try {
       try {
         const response = await axios.put(
-          "/profile/document/upload/",
+          "/api/profile/document/upload/",
           formData,
           {
             headers: {
@@ -471,7 +471,7 @@ function Settings() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -482,7 +482,7 @@ function Settings() {
         setAccessToken(data);
 
         const response = await axios.put(
-          "/profile/document/upload/",
+          "/api/profile/document/upload/",
           formData,
           {
             headers: {

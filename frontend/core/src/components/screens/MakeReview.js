@@ -57,7 +57,7 @@ function MakeReview({ params }) {
         };
 
         const { data: sendData } = await axios.put(
-          `/search/user/${id}/review/create/`,
+          `/api/search/user/${id}/review/create/`,
           {
             text: text,
             rating: rating,
@@ -73,7 +73,7 @@ function MakeReview({ params }) {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -90,7 +90,7 @@ function MakeReview({ params }) {
         };
 
         const { data: sendData } = await axios.put(
-          `/search/user/${id}/review/create/`,
+          `/api/search/user/${id}/review/create/`,
           {
             text: text,
             rating: rating,

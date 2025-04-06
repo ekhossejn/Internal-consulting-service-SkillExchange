@@ -41,7 +41,7 @@ function MakeRequest() {
       setLoading(true);
       try {
         try {
-          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -63,7 +63,7 @@ function MakeRequest() {
           userInfo.Access = data;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
-          const { data: skillData } = await axios.get(`/search/skills/get/`, {
+          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -91,7 +91,7 @@ function MakeRequest() {
     }
 
     if (makeInfo && Object.keys(makeInfo).length > 0) {
-      navigate("/profile/requests");
+      navigate("/api/profile/requests");
     }
   }, [error, makeInfo]);
 
@@ -109,7 +109,7 @@ function MakeRequest() {
         };
 
         const { data: sendData } = await axios.put(
-          `/profile/request/create/`,
+          `/api/profile/request/create/`,
           {
             name: name,
             text: text,
@@ -126,7 +126,7 @@ function MakeRequest() {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -143,7 +143,7 @@ function MakeRequest() {
         };
 
         const { data: sendData } = await axios.put(
-          `/profile/request/create/`,
+          `/api/profile/request/create/`,
           {
             name: name,
             text: text,

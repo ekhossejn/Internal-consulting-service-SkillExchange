@@ -43,7 +43,7 @@ function RequestScreen({ params }) {
         };
   
         const {data: email} = await axios.get(
-          `/profile/email/get/`,
+          `/api/profile/email/get/`,
           config
         );
   
@@ -52,7 +52,7 @@ function RequestScreen({ params }) {
         } else {
   
           const { data } = await axios.post(
-            `/search/request/respond/${id}/`,
+            `/api/search/request/respond/${id}/`,
             {},
             config
           );
@@ -64,7 +64,7 @@ function RequestScreen({ params }) {
           },
         };
         const { data } = await axios.post(
-          "api/token/refresh/",
+          "/api/token/refresh/",
           {
             refresh: refreshToken,
           },
@@ -82,7 +82,7 @@ function RequestScreen({ params }) {
         };
   
         const {data: email} = await axios.get(
-          `/profile/email/get/`,
+          `/api/profile/email/get/`,
           checkConfig
         );
   
@@ -91,7 +91,7 @@ function RequestScreen({ params }) {
         } else {
   
           const { data } = await axios.post(
-            `/search/request/respond/${id}/`,
+            `/api/search/request/respond/${id}/`,
             {},
             checkConfig
           );
@@ -115,7 +115,7 @@ function RequestScreen({ params }) {
       try {
         try {
           const { data: mainData } = await axios.get(
-            `/search/request/get/${id}/`,
+            `/api/search/request/get/${id}/`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -141,7 +141,7 @@ function RequestScreen({ params }) {
           setAccessToken(data);
   
           const { data: mainData } = await axios.get(
-            `/search/request/get/${id}/`,
+            `/api/search/request/get/${id}/`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
