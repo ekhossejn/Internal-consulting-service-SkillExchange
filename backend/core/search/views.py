@@ -16,7 +16,7 @@ def users_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
 
-    users = CustomUser.objects.exclude(id=request.user.id).filter(company__id=request.user.company.id)
+    users = CustomUser.objects.exclude(id=request.user.id).filter(company__id=request.user.company.id).filter(is_active=request.user.is_active)
 
     if filter_skills != None: 
         if isinstance(filter_skills, list):
