@@ -25,13 +25,17 @@ def profile_update(request):
         return Response({"detail": "Файл не является корректным изображением!"}, status=status.HTTP_400_BAD_REQUEST)
     if image:
         request.data['image'] = image
-    old_image_url = os.path.join(core.settings.MEDIA_ROOT, str(request.user.image))
     user_serializer = UpdateCustomUserSerializer(request.user, data=request.data, partial=True)
     if user_serializer.is_valid():
+        if image and request.user.image:
+            old_image_url = os.path.join(core.settings.MEDIA_ROOT, str(request.user.image))
+            if os.path.exists(old_image_url) and not old_image_url.endswith("avatars/default.jpg"):
+                try:
+                    os.remove(old_image_url)
+                except:
+                    pass
         user_serializer.save()
         user_serializer = CustomUserSerializer(request.user)
-        if image and os.path.exists(old_image_url) and not old_image_url.endswith("avatars/default.jpg"):
-            os.remove(old_image_url)
         return Response(user_serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(user_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -87,6 +91,7 @@ def email_get(request):
 @permission_classes([IsAuthenticated])
 def request_create(request):
     skills_ids = request.data.pop('requiredSkills', [])
+    request.data['authorImage'] = request.user.image
     serializer = RequestsSerializer(data=request.data)
 
     if serializer.is_valid():
