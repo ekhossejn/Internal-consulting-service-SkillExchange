@@ -16,7 +16,7 @@ def users_get(request):
     filter_skills = request.data.get('filter_skills', None)
     filter_rating = request.data.get('filter_rating', None)
 
-    users = CustomUser.objects.exclude(id=request.user.id).filter(company__id=request.user.company.id).filter(is_active=request.user.is_active)
+    users = CustomUser.objects.exclude(id=request.user.id).filter(company__id=request.user.company.id).filter(is_active=True)
 
     if filter_skills != None: 
         if isinstance(filter_skills, list):
@@ -33,13 +33,15 @@ def users_get(request):
     serializer = CustomUserShortInfoSerializer(users, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def user_get(request, _id):
     try: 
         user_obj = CustomUser.objects.get(id=_id) 
     except CustomUser.DoesNotExist:
         return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if not user_obj.is_active:
+         return Response({"detail": "Аккаунт пользователя с таким id не активирован."}, status=status.HTTP_403_FORBIDDEN)
     if request.user.id == user_obj.id:
         return Response({"detail": "Пользователь с таким id не доступен, так как он не может просматривать сам себя."}, status=status.HTTP_403_FORBIDDEN)
     if request.user.company.id != user_obj.company.id:
@@ -67,7 +69,7 @@ def requests_get(request):
     serializer = RequestsShortInfoSerializer(requests, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def request_get(request, _id):
     try:
@@ -78,7 +80,7 @@ def request_get(request, _id):
         return Response({"detail": "Запрос с таким id не доступен так как его просматривает владелец."}, status=status.HTTP_403_FORBIDDEN)
     if request.user.company.id != request_obj.author.company.id:
         return Response({"detail": "Запрос с таким id не доступен так как почта его автора принадлежит другой организации."}, status=status.HTTP_403_FORBIDDEN)
-    if request_obj.isActive == False:
+    if not request_obj.isActive:
         return Response({"detail": "Запрос скрыт."}, status=status.HTTP_403_FORBIDDEN)
     serializer = RequestsSerializer(request_obj)
     return Response(serializer.data)
@@ -109,7 +111,9 @@ def review_create(request, _id):
     try: 
         reviewee_obj = CustomUser.objects.get(id = _id) 
     except CustomUser.DoesNotExist:
-        return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"detail": "Пользователь с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
+    if not reviewee_obj.is_active:
+        return Response({"detail": "Аккаунт пользователя с таким id не активирован."}, status=status.HTTP_403_FORBIDDEN)
     if request.user.id == reviewee_obj.id:
         return Response({"detail": "Пользователь с таким id не доступен так как он не может оставлять отзыв сам себе."}, status=status.HTTP_403_FORBIDDEN)
     if request.user.company.id != reviewee_obj.company.id:
@@ -134,7 +138,7 @@ def review_create(request, _id):
     else:
         return Response(review_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def skills_get(request):
     skills = Skill.objects.all()

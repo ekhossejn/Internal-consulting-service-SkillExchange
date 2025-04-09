@@ -11,7 +11,7 @@ import core.settings
 from .checkers import check_is_image
 
 from .serializer import CustomUserSerializer
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def profile_get(request):
     serializer = CustomUserSerializer(request.user)
@@ -55,21 +55,18 @@ def document_upload(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def document_delete(request, _id):
-
-    print("moo")
     try:
         document_obj = Document.objects.get(id=_id)
     except Document.DoesNotExist:
         return Response({"detail": "Документ с таким id не существует."}, status=status.HTTP_404_NOT_FOUND)
     
     if request.user.id != document_obj.owner.id:
-        return Response({"detail": "У вас нет доступа для удаления этого запроса"}, status=status.HTTP_403_FORBIDDEN)
+        return Response({"detail": "У вас нет доступа для удаления этого документа"}, status=status.HTTP_403_FORBIDDEN)
     url = os.path.join(core.settings.MEDIA_ROOT, str(document_obj.image))
-    print(url)
     if os.path.exists(url):
        os.remove(url)
     document_obj.delete()
-    return Response({"detail": "Запрос успешно удален"})
+    return Response({"detail": "Документ успешно удален"})
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -77,7 +74,7 @@ def company_get(request):
     company = CompanySerializer(request.user.company, many=False)
     return Response(company.data)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def image_get(request):
     return Response(request.user.image.url)
@@ -104,7 +101,7 @@ def request_create(request):
     else:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def request_get(request, _id):
     try:
@@ -144,7 +141,7 @@ def request_active_change(request, _id):
         request_serializer.save()
     return Response({'isActive': request_serializer.data['isActive']}, status=status.HTTP_200_OK)
 
-@api_view(['GET'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def requests_get(request):
     requests = Request.objects.filter(author=request.user).select_related('author')

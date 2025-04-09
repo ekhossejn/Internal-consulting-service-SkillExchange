@@ -5,10 +5,10 @@ urlpatterns = [
     path('skills/get/', views.skills_get),
 
     path('requests/get/', views.requests_get),
-    path('request/get/<str:_id>/', views.request_get),
-    path('request/respond/<str:_id>/', views.request_respond),
+    path('requests/get/<str:_id>/', views.request_get),
+    path('requests/get/<str:_id>/respond/', views.request_respond),
 
     path('users/get/', views.users_get),
-    path('user/get/<str:_id>/', views.user_get),
-    path('user/<str:_id>/review/create/', views.review_create)
+    path('users/get/<str:_id>/', views.user_get),
+    path('users/get/<str:_id>/review/create/', views.review_create)
 ]
