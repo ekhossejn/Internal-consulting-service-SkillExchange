@@ -55,7 +55,7 @@ function MyRequestScreen() {
         };
   
         const { data } = await axios.post(
-          `/api/profile/requests/get/${id}/active/change/`,
+          `/api/profile/requests/get/${id}/active_change/`,
           {},
           config
         );
@@ -89,7 +89,7 @@ function MyRequestScreen() {
         };
   
         const { data: changeData } = await axios.post(
-          `/api/profile/requests/get/${id}/active/change/`,
+          `/api/profile/requests/get/${id}/active_change/`,
           {},
           changeConfig
         );
