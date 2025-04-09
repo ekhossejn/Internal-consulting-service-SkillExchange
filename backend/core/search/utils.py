@@ -10,7 +10,7 @@ def send_email(send_from, request_obj):
         {
             'user': send_from,
             'author': author,
-            'domain': 'localhost:3000',
+            'domain': '185.207.1.140',
             'id': request_obj.id,
             'email': send_from.email
         }
