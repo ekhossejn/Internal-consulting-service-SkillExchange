@@ -151,7 +151,7 @@ function SearchRequests() {
       setLoading(true);
       try {
         try {
-          const { data } = await axios.get(`/api/search/skills/get/`, {
+          const { data } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -174,7 +174,7 @@ function SearchRequests() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
   
-          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
+          const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

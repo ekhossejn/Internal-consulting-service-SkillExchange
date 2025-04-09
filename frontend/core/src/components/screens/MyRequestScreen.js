@@ -55,7 +55,7 @@ function MyRequestScreen() {
         };
   
         const { data } = await axios.post(
-          `/api/profile/request/${id}/active/change/`,
+          `/api/profile/requests/get/${id}/active/change/`,
           {},
           config
         );
@@ -89,7 +89,7 @@ function MyRequestScreen() {
         };
   
         const { data: changeData } = await axios.post(
-          `/api/profile/request/${id}/active/change/`,
+          `/api/profile/requests/get/${id}/active/change/`,
           {},
           changeConfig
         );
@@ -121,8 +121,9 @@ function MyRequestScreen() {
               Authorization: `Bearer ${accessToken}`,
             },
           };
-          const { data: mainData } = await axios.get(
-            `/api/profile/request/get/${id}/`,
+          const { data: mainData } = await axios.post(
+            `/api/profile/requests/get/${id}/`,
+            {},
             config
           );
           setMainInfo(mainData);
@@ -148,8 +149,9 @@ function MyRequestScreen() {
               Authorization: `Bearer ${accessToken}`,
             },
           };
-          const { data: mainData } = await axios.get(
-            `/api/profile/request/get/${id}/`,
+          const { data: mainData } = await axios.post(
+            `/api/profile/requests/get/${id}/`,
+            {},
             mainDataConfig
           );
           setMainInfo(mainData);

@@ -52,7 +52,7 @@ function RequestScreen({ params }) {
         } else {
   
           const { data } = await axios.post(
-            `/api/search/request/respond/${id}/`,
+            `/api/search/requests/get/${id}/respond/`,
             {},
             config
           );
@@ -91,7 +91,7 @@ function RequestScreen({ params }) {
         } else {
   
           const { data } = await axios.post(
-            `/api/search/request/respond/${id}/`,
+            `/api/search/requests/get/${id}/respond/`,
             {},
             checkConfig
           );
@@ -114,8 +114,9 @@ function RequestScreen({ params }) {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(
-            `/api/search/request/get/${id}/`,
+          const { data: mainData } = await axios.post(
+            `/api/search/requests/get/${id}/`,
+            {},
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -130,7 +131,7 @@ function RequestScreen({ params }) {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },
@@ -140,8 +141,9 @@ function RequestScreen({ params }) {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
   
-          const { data: mainData } = await axios.get(
-            `/api/search/request/get/${id}/`,
+          const { data: mainData } = await axios.post(
+            `/api/search/requests/get/${id}/`,
+            {},
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,

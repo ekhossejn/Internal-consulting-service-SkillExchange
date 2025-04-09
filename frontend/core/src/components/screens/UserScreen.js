@@ -36,7 +36,7 @@ function UserScreen({ params }) {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(`/api/search/user/get/${id}`, {
+          const { data: mainData } = await axios.post(`/api/search/users/get/${id}/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -59,7 +59,7 @@ function UserScreen({ params }) {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: mainData } = await axios.get(`/api/search/user/get/${id}`, {
+          const { data: mainData } = await axios.post(`/api/search/users/get/${id}/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },

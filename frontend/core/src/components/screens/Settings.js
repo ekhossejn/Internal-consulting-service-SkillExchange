@@ -36,7 +36,7 @@ function Settings() {
       setLoading(true);
       try {
         try {
-          const { data: mainData } = await axios.get(`/api/profile/`, {
+          const { data: mainData } = await axios.post(`/api/profile/get/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -66,7 +66,7 @@ function Settings() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: mainData } = await axios.get(`/api/profile/`, {
+          const { data: mainData } = await axios.post(`/api/profile/get/`, {}, {
             headers: {
               Authorization: `Bearer ${accessToken}`,
             },
@@ -95,7 +95,7 @@ function Settings() {
     const fetchAvailableSkills = async () => {
       try {
         try {
-          const { data } = await axios.get(`/api/search/skills/get/`, {
+          const { data } = await axios.post(`/api/search/skills/get/`,{}, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           setAvailableSkills(
@@ -121,7 +121,7 @@ function Settings() {
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
           setAccessToken(data);
 
-          const { data: skillData } = await axios.get(`/api/search/skills/get/`, {
+          const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: { Authorization: `Bearer ${accessToken}` },
           });
           setAvailableSkills(
@@ -364,7 +364,7 @@ function Settings() {
     try {
       try {
         await axios.post(
-          `/api/profile/document/${selectedDocument.id}/delete/`,
+          `/api/profile/document/get/${selectedDocument.id}/delete/`,
           {},
           {
             headers: {
@@ -398,7 +398,7 @@ function Settings() {
         setAccessToken(data);
 
         await axios.post(
-          `/api/profile/document/${selectedDocument.id}/delete/`,
+          `/api/profile/document/get/${selectedDocument.id}/delete/`,
           {},
           {
             headers: {

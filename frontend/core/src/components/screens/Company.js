@@ -33,7 +33,7 @@ function Company() {
             },
           };
           const { data } = await axios.post(
-            "api/token/refresh/",
+            "/api/token/refresh/",
             {
               refresh: refreshToken,
             },

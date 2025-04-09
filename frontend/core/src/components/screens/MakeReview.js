@@ -57,7 +57,7 @@ function MakeReview({ params }) {
         };
 
         const { data: sendData } = await axios.put(
-          `/api/search/user/${id}/review/create/`,
+          `/api/search/users/get/${id}/review/create/`,
           {
             text: text,
             rating: rating,
@@ -90,7 +90,7 @@ function MakeReview({ params }) {
         };
 
         const { data: sendData } = await axios.put(
-          `/api/search/user/${id}/review/create/`,
+          `/api/search/users/get/${id}/review/create/`,
           {
             text: text,
             rating: rating,
