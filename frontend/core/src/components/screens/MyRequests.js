@@ -53,14 +53,14 @@ function MyRequests() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         const deleteConfig = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${data.access}`,
           },
         };
   
@@ -109,13 +109,13 @@ function MyRequests() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           const {data: requestData } = await axios.post(`/api/profile/requests/get/`, {}, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setRequests(requestData);

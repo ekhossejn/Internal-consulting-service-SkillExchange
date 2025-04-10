@@ -77,14 +77,14 @@ function MyRequestScreen() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         const changeConfig = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${data.access}`,
           },
         };
   
@@ -140,13 +140,13 @@ function MyRequestScreen() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           const mainDataConfig = {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           };
           const { data: mainData } = await axios.post(

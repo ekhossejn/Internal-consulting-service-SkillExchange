@@ -62,13 +62,13 @@ function Settings() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
 
           const { data: mainData } = await axios.post(`/api/profile/get/`, {}, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setMainInfo(mainData);
@@ -117,12 +117,12 @@ function Settings() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
 
           const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
-            headers: { Authorization: `Bearer ${accessToken}` },
+            headers: { Authorization: `Bearer ${data.access}` },
           });
           setAvailableSkills(
             skillData.map((skill) => ({
@@ -187,16 +187,16 @@ function Settings() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
 
           const { data: updateData } = await axios.post(
             "/api/profile/update/",
             formData,
             {
               headers: {
-                Authorization: `Bearer ${accessToken}`,
+                Authorization: `Bearer ${data.access}`,
               },
             }
           );
@@ -259,9 +259,9 @@ function Settings() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         setIsUpdatingName(true);
         const { data: updateData } = await axios.post(
@@ -269,7 +269,7 @@ function Settings() {
           { name },
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           }
         );
@@ -323,16 +323,16 @@ function Settings() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         const { data: updateData } = await axios.post(
           "/api/profile/update/",
           { skills: selectedSkills.map((skill) => skill.value) },
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           }
         );
@@ -393,16 +393,16 @@ function Settings() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         await axios.post(
           `/api/profile/document/get/${selectedDocument.id}/delete/`,
           {},
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           }
         );
@@ -457,7 +457,6 @@ function Settings() {
 
         const uploadedDocument = response.data;
 
-        console.log("Uploaded document:", uploadedDocument);
         setMainInfo((prevMainInfo) => ({
           ...prevMainInfo,
           documents: [...prevMainInfo.documents, uploadedDocument],
@@ -477,16 +476,16 @@ function Settings() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
 
         const response = await axios.put(
           "/api/profile/document/upload/",
           formData,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           }
         );

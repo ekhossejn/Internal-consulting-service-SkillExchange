@@ -79,13 +79,13 @@ function MakeReview({ params }) {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
         const sendConfig = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${data.access}`,
           },
         };
 
@@ -138,8 +138,8 @@ function MakeReview({ params }) {
 
                           if (input.length == 0) {
                             setTextError("Текст должен быть не пустым");
-                          } else if (input.length > 10) {
-                            setTextError("Максимум 100 символов");
+                          } else if (input.length > 1000) {
+                            setTextError("Максимум 1000 символов");
                           } else {
                             setTextError("");
                           }

@@ -75,34 +75,34 @@ function SearchRequests() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           if (selectedSkills.length == 0) {
-            const { data } = await axios.post(
+            const { data: reqData } = await axios.post(
               `/api/search/requests/get/`,
               { filter_rating: ratingFilter },
               {
                 headers: {
-                  Authorization: `Bearer ${accessToken}`,
+                  Authorization: `Bearer ${data.access}`,
                 },
               }
             );
-            setRequests(data);
-            setShownRequests(data);
+            setRequests(reqData);
+            setShownRequests(reqData);
           } else {
-            const { data } = await axios.post(
+            const { data: reqData } = await axios.post(
               `/api/search/requests/get/`,
               { filter_rating: ratingFilter, filter_skills: selectedSkills },
               {
                 headers: {
-                  Authorization: `Bearer ${accessToken}`,
+                  Authorization: `Bearer ${data.access}`,
                 },
               }
             );
-            setRequests(data);
-            setShownRequests(data);
+            setRequests(reqData);
+            setShownRequests(reqData);
           }
         }
       } catch (error) {
@@ -170,13 +170,13 @@ function SearchRequests() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setSkills(skillData);
