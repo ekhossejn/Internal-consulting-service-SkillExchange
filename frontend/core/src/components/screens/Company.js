@@ -39,12 +39,12 @@ function Company() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
           const { data: mainData } = await axios.get(`/api/profile/company/get/`, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setMainInfo(mainData);

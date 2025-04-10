@@ -60,12 +60,12 @@ function MakeRequest() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
           const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setAllSkills(skillData);
@@ -132,13 +132,13 @@ function MakeRequest() {
           },
           config
         );
-        userInfo.Access = data;
+        userInfo.access = data.access;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        setAccessToken(data);
+        setAccessToken(data.access);
         const configToken = {
           headers: {
             "Content-type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${data.access}`,
           },
         };
 

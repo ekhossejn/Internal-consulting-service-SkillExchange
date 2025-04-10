@@ -74,24 +74,24 @@ function SearchUsers() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           if (selectedSkills.length == 0) {
-            const { data } = await axios.post(
+            const { data: reqData } = await axios.post(
               `/api/search/users/get/`,
               { filter_rating: ratingFilter },
               {
                 headers: {
-                  Authorization: `Bearer ${accessToken}`,
+                  Authorization: `Bearer ${data.access}`,
                 },
               }
             );
-            setUsers(data);
-            setShownUsers(data);
+            setUsers(reqData);
+            setShownUsers(reqData);
           } else {
-            const { data } = await axios.post(
+            const { data: reqData } = await axios.post(
               `/api/search/users/get/`,
               { filter_rating: ratingFilter, filter_skills: selectedSkills },
               {
@@ -100,8 +100,8 @@ function SearchUsers() {
                 },
               }
             );
-            setUsers(data);
-            setShownUsers(data);
+            setUsers(reqData);
+            setShownUsers(reqData);
           }
         }
       } catch (error) {
@@ -143,13 +143,13 @@ function SearchUsers() {
             },
             config
           );
-          userInfo.Access = data;
+          userInfo.access = data.access;
           localStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setAccessToken(data);
+          setAccessToken(data.access);
   
           const { data: skillData } = await axios.post(`/api/search/skills/get/`, {}, {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${data.access}`,
             },
           });
           setSkills(skillData );
